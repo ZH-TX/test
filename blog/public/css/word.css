@@ -1,0 +1,13 @@
+#content #cont{
+	min-height: 50rem;
+}
+#cont p{
+	margin: 10px auto;
+}
+#cont a{
+	transition: 0.5s;
+	color:#797979;
+}
+#cont a:hover{
+	color:#F8962E;
+}

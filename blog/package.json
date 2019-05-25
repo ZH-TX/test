@@ -1,0 +1,24 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "description": "blog",
+  "main": "index.js",
+  "scripts": {
+    "test": "blog",
+    "start":"node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/lingmx/blog.git"
+  },
+  "keywords": [
+    "blog"
+  ],
+  "author": "lingmx",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "mysql": "^2.17.1"
+  }
+}

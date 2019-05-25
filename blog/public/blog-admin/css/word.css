@@ -1,0 +1,15 @@
+#content{
+	width: 100%;
+	margin: 0 auto;
+}
+.title{
+	width: 800px;
+	margin: 0 auto;
+}
+#cont{
+	width: 800px;
+	margin: 0 auto;
+}
+#cont p{
+	text-indent:2em;
+}

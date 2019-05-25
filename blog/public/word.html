@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>LMX的私密小屋</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="stylesheet" href="css/bootstrap.css" />
+		<link rel="stylesheet" type="text/css" href="css/commen.css"/>
+		<link rel="stylesheet" type="text/css" href="css/web.css"/>
+		<link rel="stylesheet" type="text/css" href="css/word.css"/>
+		<script src="js/jquery.min.js"></script>
+		<script src="js/popper.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-0 col-sm-12">
+					<img src="img/admin.png" class="admin" title="登录" onclick="loadIn()">
+					<img src="img/search.png" class="search" title="搜索" onclick="search()">
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-0 col-sm-0 col-sm-12">
+					<img src="img/search.png" class="search" title="搜索" onclick="search()">
+					<img src="img/menu.png" class="admin" title="菜单" onclick="menu()">
+				</div>
+				<div class="col-lg-0 col-sm-0 col-sm-12 text-center mt-4">
+					<img src="img/lingmx-logo.png">
+				</div>
+				<div id="nav" class="col-0 col-lg-8 offset-lg-2 col-md-12 mt-3 mb-3">
+					<div id="logo">
+						<img src="img/lingmx-logo.png">
+						<p>Life is like a drama, and everything depends on your performance.</p>
+					</div>
+					<div id="nav_bir">
+						<ul>
+							<li><a href="index.html">首页</a></li>
+							<li><a href="web.html?ojbk1">Web前端</a></li>
+							<li><a href="web.html?ojbk2">闲文杂谈</a></li>
+							<li><a href="web.html?ojbk3">否头笑谱</a></li>
+							<li><a href="web.html?ojbk4">U3D记录</a></li>
+							<li><a href="msg.html">足迹</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="row p-0">
+				<div class="col-12 p-0">
+					<div id="header">
+						<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100" preserveAspectRatio="none">
+							<path id="pl1" d="M0 100 L50 150 L0 100" fill="rgba(255,255,255, .1)"></path>
+							<path id="pr1" d="M100 100 L50 150 L100 100" fill="rgba(255,255,255, .1)"></path>
+							<path id="pl2" d="M0 100 L50 150 L0 100" fill="rgba(255,255,255, .3)"></path>
+							<path id="pr2" d="M100 100 L50 150 L100 100" fill="rgba(255,255,255, .3)"></path>
+							<path id="pl3" d="M0 100 L50 150 L0 100" fill="rgba(255,255,255, .5)"></path>
+							<path id="pr3" d="M100 100 L50 150 L100 100" fill="rgba(255,255,255, .5)"></path>
+							<path d="M0 100 L50 49.9 L100 100 L0 100" fill="rgba(255,255,255, 1)"></path>
+							<path d="M48 52 L50 49 L52 52 L48 52" fill="rgba(255,255,255, 1)"></path>
+						</svg>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="container-fluid p-0">
+			<!-- <div class="row m-0">
+				<div class="col-12 p-0">
+					<iframe src="header.html" width="100%" frameborder="0" onload="changeFrameHight()" id="hIframe" scrolling="no" style="display:block;"></iframe>
+				</div>
+			</div> -->
+			<div class="row m-0 bg-white">
+				<div id="content" class="w-100 col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-sm-12">
+					<div class="title">
+						<h2 id="c_title"></h2>
+						<hr>
+						<div id="wed"></div>
+					</div>
+					<div id="cont">
+						<div class="col-12 text-center">
+							<img src="img/loading.gif">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- <div class="row m-0">
+			<div class="col-12 p-0">
+				<iframe src="bottom.html" width="100%" frameborder="0" id="hIframe2" onload="changeFrameHight()" scrolling="no" style="display:block;"></iframe>
+			</div>
+		</div> -->
+		<div class="container-fluid">
+			<div id="foot" class="row">
+				<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100"	preserveAspectRatio="none">
+					<path d="M0 0 L50 40 L100 0 L0 0" fill="rgba(255,255,255, 1)"></path>
+				</svg>
+				<div class="col-md-12 col-0 foot_copy text-white">
+					<ul>
+						<li class="m-2">不</li>
+						<li class="m-2">要</li>
+						<li class="m-2">点</li>
+						<li class="m-2">这</li>
+						<li class="m-2">里</li>
+					</ul>
+				</div>
+				<div class="col-12 text-white">
+					<p>Copyright&copy;2018 Mr.ling <a href="http://www.miitbeian.gov.cn/" class="write">豫ICP备17049184号-2</a></p><br>
+				</div>
+			</div>
+		</div>
+		<script src="js/common.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/word.js" type="text/javascript" charset="utf-8"></script>
+	</body>
+</html>

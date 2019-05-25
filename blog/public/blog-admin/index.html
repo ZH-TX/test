@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>LMX后台管理</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="stylesheet" href="css/bootstrap.css" />
+		<script src="js/indexOf.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jquery.min.js"></script>
+		<script src="js/popper.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+	</head>
+	<body>
+		<div class="container-fluid p-0">
+			<div class="row m-0"  id="header">
+				<div class="col-lg-0 col-sm-0 col-sm-12 text-right">
+					<img src="img/menu.png" class="mt-3 mr-3" title="菜单" onclick="menu()">
+				</div>
+				<div class="col-lg-0 col-sm-0 col-sm-12 text-center mt-4">
+					<img src="img/lingmx-logo.png">
+				</div>
+				<div class="col-0 col-lg-8 offset-lg-2 col-md-12 p-0">
+					<div id="nav" class="w-100 text-center">
+						<div id="logo" class="w-100">
+							<img src="img/lingmx-logo.png">
+							<p>Welcome to the background management system</p>
+						</div>
+						<div id="nav_bir" class="w-100">
+							<ul>
+								<li>
+									<a href="javascript:changeCount(0)">后台主页</a>
+								</li>
+								<li>
+									<a href="javascript:changeCount(-90)">新建文章</a>
+								</li>
+								<li>
+									<a href="javascript:changeCount(-180)">编辑文章</a>
+								</li>
+								<li>
+									<a href="javascript:changeCount(-270)">编辑留言</a>
+								</li>
+								<li>
+									<a href="../index.html">返回博客</a>
+								</li> 
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="col-12 p-0 svgFather">
+					<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100" preserveAspectRatio="none">
+						<path id="pl1" d="M0 100 L50 150 L0 100" fill="rgba(255,255,255, .1)"></path>
+						<path id="pr1" d="M100 100 L50 150 L100 100" fill="rgba(255,255,255, .1)"></path>
+						<path id="pl2" d="M0 100 L50 150 L0 100" fill="rgba(255,255,255, .3)"></path>
+						<path id="pr2" d="M100 100 L50 150 L100 100" fill="rgba(255,255,255, .3)"></path>
+						<path id="pl3" d="M0 100 L50 150 L0 100" fill="rgba(255,255,255, .5)"></path>
+						<path id="pr3" d="M100 100 L50 150 L100 100" fill="rgba(255,255,255, .5)"></path>
+						<path d="M0 100 L50 49.9 L100 100 L0 100" fill="rgba(255,255,255, 1)"></path>
+						<path d="M48 52 L50 49 L52 52 L48 52" fill="rgba(255,255,255, 1)"></path>
+					</svg>
+				</div>
+			</div>
+		</div>
+		<div id="content" class="container-fluid p-0 bg-white">
+			<div id="cont_list" class="row m-0 bg-white w-100">
+				<div id="cont1" class="w-100 col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-sm-12">
+					<div id="today" class="w-100">
+						<h2>最新数据</h2>
+						<hr />
+						<div>
+							<table cellpadding="0" cellspacing="0">
+								<tr>
+									<td>新增文章：<span id="todayWord"></span></td>
+									<td>新增留言：<span id="todayMsg"></span></td>
+									<td>新增浏览：<span id="todayVisitor"></span></td>
+								</tr>
+								<tr>
+									<td>历史文章：<span id="wordGains"></span></td>
+									<td>历史留言：<span id="msgGains"></span></td>
+									<td>历史浏览：<span id="visitorGains"></span></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<div id="today_msg" class="w-100">
+						<h3>最新留言</h3>
+						<hr />
+						<div id="latestMsg">
+							<p class="refresh" onclick="changeMsgInfo()">[刷新]</p>
+							<div id="MsgCont1"></div>
+							<div id="MsgCont2"></div>
+						</div>
+						<h3>最新文章</h3>
+						<hr />
+						<div id="latestWord" onclick="changeWordInfo()">
+							<p class="refresh">[刷新]</p>
+							<div id="WordCont1"></div>
+							<div id="WordCont2"></div>
+							<div id="WordCont3"></div>
+							<div id="WordCont4"></div>
+						</div>
+					</div>
+				</div>
+				<div id="cont2" class="w-100 col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-sm-12">
+					<div id="newWord" class="w-100">
+						<h2>新建文章</h2>
+						<hr />
+						<div id="newWordTitle" class="w-100">
+							<h3>文章标题：</h3>
+							<input type="text" id="nwTitle" class="w-95" onblur="checkTitle()" onfocus="titlePrompt()"/>
+						</div>
+						<div id="newWordClass" class="w-95">
+							<span>文章分类：</span>
+							<select id="nwClass">
+								<option value="1" selected>web前端</option>
+								<option value="2">闲文杂谈</option>
+								<option value="3">否头小铺</option>
+								<option value="4">U3D记录</option>
+							</select><br />
+							<span>是否原创:</span>
+							<input type="checkbox" value="1" id="isAuthor"/>
+							<label for="isAuthor">原创</label>
+						</div>
+						<div id="newWordCount">
+							<h3>文章内容：</h3>
+							<div id="nwBtn">
+								<ul>
+									<li onclick="inputP()">段落</li>
+									<li onclick="inputBr()">换行</li>
+									<li onclick="inputStrong()">加粗</li>
+									<li onclick="inputHx(1)">H1</li>
+									<li onclick="inputHx(2)">H2</li>
+									<li onclick="inputHx(3)">H3</li>
+									<li onclick="inputHx(4)">H4</li>
+									<li onclick="inputHx(5)">H5</li>
+									<li onclick="inputHx(6)">H6</li>
+									<li onclick="inputUl()">列表</li>
+									<li onclick="inputHr()">分隔</li>
+									<li onclick="showCont()" class="big_btn">查看效果</li>
+								</ul>
+							</div>
+							<div id="nwContent">
+								<textarea id="nwCont" class="w-95" placeholder="请输入带html标签的文本，点击按钮查看效果"></textarea>
+								<button class="btn btn-success" onclick="subWord()">发布文章</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="cont3" class="w-100 col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-sm-12">
+					<div id="changeWord">
+						<h2>编辑文章</h2>
+						<hr />
+						<table id="wordList" class="w-95 text-center">
+							<thead>
+								<tr>
+									<th>编号</th>
+									<th>发布日期</th>
+									<th>文章标题</th>
+									<th>是否原创</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody id="listBody"></tbody>
+							<tfoot>
+								<tr>
+									<td colspan="5" id="listPage" align="right"></td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+				<div id="cont4" class="w-100 col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-sm-12">
+					<div id="changeMsg">
+						<h2>编辑留言</h2>
+						<hr />
+						<table id="msgList" class="w-95 text-center">
+							<thead>
+								<tr>
+									<th>编号</th>
+									<th>日期</th>
+									<th>标题</th>
+									<th>昵称</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody id="msgBody"></tbody>
+							<tfoot>
+								<tr>
+									<td colspan="6" id="msgPage" align="right"></td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 文章预览 -->
+		<div id="showCont" onclick="offShowCont()" class="pt-5 pb-5">
+			<iframe src="word.html" width="80%" height="100%" name="showFrame" frameborder="0"></iframe>
+		</div>
+		<!-- 文章修改 -->
+		<div id="updateWord" onclick="offUpDateWord()" class="pt-md-5 pb-md-5">
+			<div id="upWord" onclick="stopOffUpdate()">
+				<h3>修改文章</h3>
+				<hr />
+				<div id="upWordTitle">
+					<h3>文章标题：</h3>
+					<input type="text" id="upTitle" onblur="checkUpTitle()" onfocus="titleUpPrompt()"/>
+					<input type="hidden" id="wid" />
+				</div>
+				<div id="upWordClass">
+					<span>文章分类：</span>
+					<select id="upClass">
+						<option value="1">web前端</option>
+						<option value="2">闲文杂谈</option>
+						<option value="3">否头小铺</option>
+						<option value="4">U3D记录</option>
+					</select>
+				</div>
+				<div id="upWordCount">
+					<h3>文章内容：</h3>
+					<div id="upContent">
+						<textarea id="upCont" placeholder="请输入带html标签的文本，点击按钮查看效果"></textarea>
+						<button class="btn btn-success" onclick="subupWord()" >提交修改</button>
+						<button class="btn btn-warning" onclick="offUpDateWord()">取消修改</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 回复留言 -->
+		<div id="replyMsg" onclick="offReply()">
+			<div id="orgMsg" onclick="stopOffReply()">
+				<h3>回复留言</h3>
+				<div>
+					<p>留言昵称：<span id="msgName"></span></p>
+					<p>留言标题：<span id="msgTitle"></span></p>
+					<p>留言内容：<span id="msgCount"></span></p>
+				</div>
+				<h4>回复内容</h4>
+				<div>
+					<textarea id="replyCount" placeholder="请输入回复内容"></textarea>
+				</div>
+				<button class="btn btn-success" onclick="subReplyMsg()">提交回复</button>
+				<button class="btn btn-warning" onclick="offReply()">取消回复</button>
+			</div>
+		</div>
+		<div class="container-fluid p-0">
+			<div class="row m-0 text-center" id="footer">
+				<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100" preserveAspectRatio="none">
+					<path d="M0 0 L50 40 L100 0 L0 0" fill="rgba(255,255,255, 1)"></path>
+				</svg>
+				<p class="w-100">后台管理系统V1.0</p>
+				<p class="w-100">Copyright&copy;2018 Mr.ling 
+					<a href="http://www.miitbeian.gov.cn/" class="write">豫ICP备17049184号-2</a>
+				</p>
+				<p class="w-100">-LMX-</p>
+			</div>
+		</div>
+		<script src="js/index.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/indexOfJs.js" type="text/javascript" charset="utf-8"></script>
+	</body>
+</html>

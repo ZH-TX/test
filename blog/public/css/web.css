@@ -1,0 +1,92 @@
+body{
+	background: url(../img/banner.jpg) no-repeat fixed;
+	background-size: cover;
+	font-family: '幼圆';
+}
+#content{
+	overflow: hidden;
+}
+.title{
+	height: 4rem;
+	color: #797979;
+}
+.title h2{
+	font-size: 1.375rem;
+}
+.cont_err{
+	padding: 10px;
+	width: 780px;
+	min-height: 400px;
+	margin: 0 auto;
+	border-bottom: 1px dotted #aaa;
+}
+.cont_err span{
+	color:#f8962e;
+	font-size:1rem;
+	line-height:1.875rem;
+}
+#cont .cont_word{
+	transition: 1s;
+	border-bottom: 0.0625rem dotted #aaa;
+}
+.cont_word a{
+	display: inline-block;
+	height: 3.125rem;
+	line-height: 3.125rem;
+}
+.cont_word a:hover{
+	color: #F8962E;
+}
+#cont .cont_word:hover{
+	background:#f0f0f0;
+}
+.cont_word .cont_y{
+	display: inline-block;
+	width:1.25rem;
+	height: 1.25rem;
+	border: 0.0625rem solid red;
+	border-radius: 50%;
+	color: red;
+	font-size: 1rem;
+	font-weight: initial;
+	line-height: 1.25rem;
+	text-align: center;
+}
+.cont_word .nomy{
+	color: yellowgreen;
+	border: 0.0625rem solid yellowgreen;
+}
+#cont_date{
+	text-align: right;
+	color: #797979;
+	font-size: 14px;
+	margin:5px 0;
+}
+#cont_read{
+	color: yellowgreen;
+}
+#page{
+	height: 30px;
+	text-align: right;
+	line-height: 30px;
+	margin: 10px auto;
+}
+#page ul li{
+	width: 30px;
+	height: 30px;
+	cursor: pointer;
+	text-align: center;
+	border-radius: 10px;
+	transition: 0.5s;
+	margin: 0 5px;
+	display: inline-block;
+}
+#page ul li:hover{
+	background: #f0f0f0;
+}
+#page .up,#page .down{
+	width: 60px;
+}
+.active{
+	background: #f0f0f0;
+}

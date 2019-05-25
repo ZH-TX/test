@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>LMX的私密小屋</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="stylesheet" href="css/bootstrap.css" />
+		<link rel="stylesheet" type="text/css" href="css/commen.css" />
+		<link rel="stylesheet" type="text/css" href="css/web.css" />
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+		<script src="js/jquery.min.js"></script>
+		<script src="js/popper.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+	</head>
+	<body class="bg">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-0 col-sm-12">
+					<img src="img/admin.png" class="admin" title="登录" onclick="loadIn()">
+					<img src="img/search.png" class="search" title="搜索" onclick="search()">
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-0 col-sm-0 col-sm-12">
+					<img src="img/search.png" class="search" title="搜索" onclick="search()">
+					<img src="img/menu.png" class="admin" title="菜单" onclick="menu()">
+				</div>
+				<div class="col-lg-0 col-sm-0 col-sm-12 text-center mt-4">
+					<img src="img/lingmx-logo.png">
+				</div>
+				<div id="nav" class="col-0 col-lg-8 offset-lg-2 col-md-12 mt-3 mb-3">
+					<div id="logo">
+						<img src="img/lingmx-logo.png">
+						<p>Life is like a drama, and everything depends on your performance.</p>
+					</div>
+					<div id="nav_bir">
+						<ul>
+							<li><a href="index.html">首页</a></li>
+							<li><a href="web.html?ojbk1">Web前端</a></li>
+							<li><a href="web.html?ojbk2">闲文杂谈</a></li>
+							<li><a href="web.html?ojbk3">否头笑谱</a></li>
+							<li><a href="web.html?ojbk4">U3D记录</a></li>
+							<li><a href="msg.html">足迹</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="row p-0">
+				<div class="col-12 p-0">
+					<div id="header">
+						<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100" preserveAspectRatio="none">
+							<path id="pl1" d="M0 100 L50 150 L0 100" fill="rgba(255,255,255, .1)"></path>
+							<path id="pr1" d="M100 100 L50 150 L100 100" fill="rgba(255,255,255, .1)"></path>
+							<path id="pl2" d="M0 100 L50 150 L0 100" fill="rgba(255,255,255, .3)"></path>
+							<path id="pr2" d="M100 100 L50 150 L100 100" fill="rgba(255,255,255, .3)"></path>
+							<path id="pl3" d="M0 100 L50 150 L0 100" fill="rgba(255,255,255, .5)"></path>
+							<path id="pr3" d="M100 100 L50 150 L100 100" fill="rgba(255,255,255, .5)"></path>
+							<path d="M0 100 L50 49.9 L100 100 L0 100" fill="rgba(255,255,255, 1)"></path>
+							<path d="M48 52 L50 49 L52 52 L48 52" fill="rgba(255,255,255, 1)"></path>
+						</svg>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="container-fluid p-0">
+			<div class="row m-0 bg-white">
+				<div id="content" class="w-100 col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-sm-12"></div>
+				<div id="cont" class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-sm-12 mb-5">
+					<div class="w-100 mb-5 cont_1">
+						<div class="mt-4 mb-5 ml-lg-4 ml-2 w-50">
+							<a href="" class="cont_a">你好，朋友</a>
+							<p class="cont_p">
+								欢迎光临LingMX，在这里，我会分享一些自己在学习WEB前端时遇到的一些问题解决方案或则其他的技术文档，如果大家有更好的解决方案和建议，欢迎留言给我。
+							</p>
+						</div>
+					</div>
+					<div class="w-100 mb-5 cont_2">
+						<div class="cont_img">
+							<a href=""><img src="img/img.jpg" alt=""></a>
+						</div>
+						<div class="cont_cot">
+							<a href="myDemo.html" class="cont_a write">个人项目展示</a>
+							<p class="cont_a write"><small>发布日期 2019-2-16</small></p>
+						</div>
+						<div class="cont_title" style="background-image: url(img/img.jpg);">
+						</div>
+						<div class="cont_foot p-3">
+							<p class="cont_p">
+								这里存放着我在WEB前端时自己做的一些项目，有原创、有仿站。随着技术的增加，项目也在不断的改版，如果各位有良好的建议，欢迎在留言板给我留言，或则发送邮件到529247970@qq.com。我会将项目中的源码上传至码云，如有需要，可自行下载使用。
+							</p>
+							<button class="mt-3 mb-2 text-white cont_btn" onclick="location.href='myDemo.html'">查看详情</button>
+						</div>
+					</div>
+					<div class="w-100 mb-5 cont_3">
+						<div class="cont_cot3">
+							<a href="" class="cont_a write">段<small>子一则</small></a>
+						</div>
+						<div class="cont_title" style="background-image: url(img/img2.jpg);">
+						</div>
+						<div class="cont_foot p-3">
+							<p class="cont_p">
+								小马过河，心里没底，就去请教森林里的小伙伴。 老牛说：“水很浅，刚没小腿，能趟过去。”松鼠说：“深的很哩！过不去， 我的一个伙伴就是掉在这条河里淹死的！”后来小马只得回去问妈妈， 妈妈亲切地对小马说：“孩子，你傻呀，咱们河马会游泳。”
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="container-fluid">
+			<div id="foot" class="row">
+				<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100"	preserveAspectRatio="none">
+					<path d="M0 0 L50 40 L100 0 L0 0" fill="rgba(255,255,255, 1)"></path>
+				</svg>
+				<div class="col-md-12 col-0 foot_copy text-white">
+					<ul>
+						<li class="m-2">不</li>
+						<li class="m-2">要</li>
+						<li class="m-2">点</li>
+						<li class="m-2">这</li>
+						<li class="m-2">里</li>
+					</ul>
+				</div>
+				<div class="col-12 text-white">
+					<p>Copyright&copy;2018 Mr.ling <a href="http://www.miitbeian.gov.cn/" class="write">豫ICP备17049184号-2</a></p><br>
+				</div>
+			</div>
+		</div>
+		<div id="hello"></div>
+		<script src="js/common.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/index.js" type="text/javascript" charset="utf-8"></script>
+	</body>
+</html>

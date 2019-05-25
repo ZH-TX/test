@@ -1,0 +1,103 @@
+body{
+	background: url(../img/banner.jpg) no-repeat fixed;
+	background-size: cover;
+	font-family: '幼圆';
+}
+#content{
+	background: #FFF;
+	overflow: hidden;
+}
+.title{
+	height: 5rem;
+	color: #797979;
+}
+
+.title p a{
+	cursor: pointer;
+}
+#cont{
+	color: #797979;
+	transition: 1s;
+	overflow: hidden;
+}
+.msgbox{
+	min-height: 9.375rem;
+	overflow: hidden;
+}
+.left img{
+	width: 3.125rem;
+	height: 3.125rem;
+	border-radius: 50%;
+	border: 0.0625rem solid #dfdfdf;
+}
+.msgcont{
+	overflow: hidden;
+	border-bottom:0.0625rem dotted #aaa ;
+}
+.msgcont h4{
+	font-size:1.125rem;
+}
+.msgcont p{
+	font-size: 14px;
+}
+#form hr{
+	height: 1.5625rem;
+	background: url(../img/hr.gif);
+}
+#u_email,#u_name,#m_title{
+	height: 3.125rem;
+	color: #797979;
+	background: #f0f0f0;
+	border-radius: 0.3125rem;
+}
+#form textarea{
+	height: 5rem;
+	resize: none;
+	font-size: 14px;
+	line-height: 1.5625rem;
+	color: #797979;
+	background: #f0f0f0;
+	border-radius: 0.3125rem;
+	vertical-align: top;
+}
+#submit{
+	min-height: 3rem;
+	background: #f0f0f0;
+	border-radius: 0.3125rem;
+	vertical-align: top;
+	transition: 1s;
+	color: #797979;
+	cursor: pointer;
+}
+#submit:hover{
+	background: #aaa;
+	color: #fff;
+}
+#page{
+	height: 1.875rem;
+	text-align: right;
+	line-height: 1.875rem;
+}
+#page ul li{
+	cursor: pointer;
+	border-radius: 0.625rem;
+	transition: 0.5s;
+}
+#page ul li:hover{
+	background: #f0f0f0;
+}
+#page .up,#page .down{
+	width: 3.75rem;
+}
+.active{
+	background: #f0f0f0;
+}
+/*blockquote引用样式*/
+blockquote{
+	padding-left: 10px;
+	color: #707070;
+	line-height: 1.875rem;
+	font-size: 0.875rem;
+	border-left: 0.3125rem solid #A7DBD8;
+	background: rgba(0,0,0,0.1);
+}
