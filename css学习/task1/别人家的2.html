@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .grid{
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 相当于 1fr 1fr 1fr */
+            grid-template-rows: repeat(3, 1fr); /* fr单位可以将容器分为几等份 */
+            grid-gap: 1%; /* grid-column-gap 和 grid-row-gap的简写 */
+            grid-auto-flow: row;
+        }
+        .grid>div{
+            color: #fff;
+            font-size: 50px;
+            line-height: 2;
+            margin: 1px;
+            text-align: center;
+            /* background: linear-gradient(to bottom, #f5f6f6 0%,#dbdce2 21%,#b8bac6 49%,#dddfe3 80%,#f5f6f6 100%); */
+            background: orange;
+            border-radius: 20%
+        }
+    </style>
+</head>
+<body>
+        <div class="square">
+                <div class="square-inner grid">
+                  <div>1</div>
+                  <div>2</div>
+                  <div>3</div>
+                  <div>4</div>
+                  <div>5</div>
+                  <div>6</div>
+                  <div>7</div>
+                  <div>8</div>
+                  <div>9</div>
+                </div>
+              </div>
+    
+</body>
+</html>
