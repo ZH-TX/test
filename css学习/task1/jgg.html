@@ -11,8 +11,8 @@
     
      */
         .swag{
-           
-            padding:0 0 26% 26%;
+            width: 31%;
+            padding-top:31%;
             /* padding-bottom: ; */
             margin: 1%;
 
@@ -24,6 +24,27 @@
 
         }
     </style>
+    <!-- <script >
+        /*如何开始实现这个函数
+        1.改变颜色 2.对于事件时间的了解onload click.
+        定义一个js的函数变换颜色,在通过事件按钮来进行控制:开与关(onclick 与 两个事件).
+        3.随机与不随机的方法区别4.重要的是逻辑的实现.
+    
+        
+        */ 
+        
+        function start(){
+            var x=0,y=0;
+            x=window.event.x;
+            y=window.event.y;
+            window.status="X: "+x+"Y: "+y;
+        }
+        document.onmousemove=start;
+        function end(){
+
+        }
+        
+    </script> -->
 </head>
 <body>
    <!-- 无法自适应,无法自动换行??? -->
@@ -37,6 +58,9 @@
         <div class='swag'>7</div>
         <div class='swag'>8</div>
         <div class='swag'>9</div>
+
+        <!-- <button onclick="start()">测试开始</button>
+        <button onclick="end()">测试结束</button> -->
 
    </div>
        
