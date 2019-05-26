@@ -10,6 +10,10 @@
     重要的是方法,思考的本质
     
      */
+        *{
+            margin: 0;
+            padding: 0;
+        }
         .swag{
             width: 31%;
             padding-top:31%;
@@ -24,27 +28,65 @@
 
         }
     </style>
-    <!-- <script >
+    <script > 
         /*如何开始实现这个函数
         1.改变颜色 2.对于事件时间的了解onload click.
         定义一个js的函数变换颜色,在通过事件按钮来进行控制:开与关(onclick 与 两个事件).
-        3.随机与不随机的方法区别4.重要的是逻辑的实现.
+        3.随机与不随机的方法区别,显示定位到样式,在对样式进行修改可能用到的东西:Math.random
+        4.重要的是逻辑的实现.可可根据任务提示(对于随机选择仍然不太清楚)
+        5.随机包括下标随机与颜色随机颜色随机函数.
+        6.需要加上时间函数控制,是否使用while函数使其一直循环
+        7.设置清除函数.函数会一直自动执行
+       
+       
+        #######################
+        version 0.1:实现基础的全部变色
+        version 0.2:实现随机下标变色,但会一直将其占满
+        version 0.3:实现了颜色随机函数,占满问题因此解决,但最后不在是三个变色
+        version 0.4:实现了自动控制,可依然不是在三个范围内
     
-        
+        ##########################
         */ 
-        
-        function start(){
-            var x=0,y=0;
-            x=window.event.x;
-            y=window.event.y;
-            window.status="X: "+x+"Y: "+y;
+        function color() {
+            var rgb;
+            var r = Math.floor(Math.random()*256);
+            var g = Math.floor(Math.random()*256);
+            var b = Math.floor(Math.random()*256);
+            rgb = 'rgb('+r+','+g+','+b+')';
+            return rgb;
         }
-        document.onmousemove=start;
-        function end(){
+
+
+        var x= function (){
+           
+          
+            for(var i=0;i<3;i++){
+                var a=Math.floor(Math.random()*9) 
+                var newStyle=document.getElementsByClassName("swag");
+                
+                newStyle[a].style.background=color();
+            
+
+            
+
+            }
+        
+
 
         }
+        var st;    //这个参数的设置很重要
+        function start(){
+          st=setInterval(x,1000);  
+        }
         
-    </script> -->
+
+
+        
+       
+        function end(){
+            clearInterval(st);
+        } 
+    </script>
 </head>
 <body>
    <!-- 无法自适应,无法自动换行??? -->
@@ -59,8 +101,8 @@
         <div class='swag'>8</div>
         <div class='swag'>9</div>
 
-        <!-- <button onclick="start()">测试开始</button>
-        <button onclick="end()">测试结束</button> -->
+        <button onclick="start()">测试开始</button>
+        <button onclick="end()">测试结束</button>
 
    </div>
        
