@@ -14,6 +14,9 @@ body,html{
     
     text-align: center;
     background:  #68cdd5;
+    display: -webkit-flex;
+    justify-content:space-between ;
+    align-items:center;
 }
 .main{
     height: 100%;
@@ -28,26 +31,46 @@ body,html{
     color: white;
     border: none;
     outline: none;
+    
 
 }
 .footer{
 
 }
+/* 头部设置即可 */
 .left{
-    float: left;
+    margin-left: 5px;
     font-size: 8px;
+    /* float: left;
+    
     margin: 15px 0px 0px 5px;
+    display: -webkit-flex;
+    order: -1;
+    justify-content: center;
+    
+    align-items: center; */
 }
 .right{
-    float: right;
+    margin-right: 5px;
     font-size: 8px;
+    /* float: right;
+    
     margin: 15px 5px 0px 0px;
+    display: -webkit-flex;
+    justify-content: center;
+    order: 1;
+    align-items: center; */
 
 }
-a.center{
-    /* 设置没有用???如何居中 */
-    margin: 0 auto ;
+.center{
+    margin-top: 5px;
+    font-size: 12px;
+    /* 设置没有用???如何居中 
+     margin: 0 auto ;
     line-height:50px;
+    display: -webkit-flex;
+    justify-content: center;
+    align-items: center; */
     
 }
 a{
@@ -64,7 +87,7 @@ a{
     
     background: rgb(255, 255, 255);
     /* border: none; */
-     display: flex;
+     display: -webkit-flex;
     /* justify-content: center;
     align-items: center; */
 }
