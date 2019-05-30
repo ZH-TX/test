@@ -57,7 +57,7 @@ body,html{
     height: 15px;
 }
 .main {
-    width: 100%;
+    /* width: 100%; */
     height: 60%;
     /* display: -webkit-flex;
     align-content: center; */
