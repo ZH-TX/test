@@ -1,0 +1,15 @@
+
+/* 内联元素的居中
+text-align 放上面下面都可以
+*/
+div{
+    height:60px;
+    border: 2px dashed #f69c55;
+    /* text-align: center; */
+}
+.inline{
+    /* width: 50px;
+    height: 50px; */
+    text-align: center;
+    background: rgb(29, 184, 62);
+}

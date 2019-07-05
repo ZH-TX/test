@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>块级居中</title>
+    <style>
+    
+    /* 块级元素的居中
+    
+    
+    */
+    div {
+    height:100px;
+    border: 2px dashed #f69c55;
+    /* 这里会使文字居中 */
+    text-align:center;
+    }
+
+    .center-block {
+    margin: 0 auto;
+
+   /* 这个水平左右居中*/
+    /* display:inline-block;
+   */
+    width: 8rem;
+    padding:1rem;
+    color:#fff;
+    background:rgb(71, 158, 20);
+    }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="center-block">
+            这是块级元素.center-block ;
+                margin: 0 auto有效居中;
+        </div>
+    </div>
+    
+    <div class=""></div>
+    <div class=""></div>
+    <div class=""></div>
+    <div class=""></div>
+    
+</body>
+</html>  
