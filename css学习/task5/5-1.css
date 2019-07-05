@@ -80,17 +80,19 @@ li {
     color: red;
 }
 .text{
-   
+    /* width:20%; */
+
     margin-right: 10px;
     color: rgb(138, 135, 135);
     
 }
 
-/* 神奇的bug???330px不太懂 */
+/* 神奇的bug???330px不太懂       flex-shrink:0;这一句十分重要 */
 .text2{
-    width: 320px;
+    /* width: 320px; */
+    flex-shrink: 0;
     /* width: 70%; */
-    /* margin-right: 10px; */
+    margin-right: 10px;
     color: rgb(138, 135, 135);
 }
 .last{
