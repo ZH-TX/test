@@ -88,6 +88,7 @@ body,html{
     border: 0;
     border-right: 2px solid #f5f6f7;
     color: rgb(173, 173, 173);
+  
     
 }
 .bt_2{
@@ -120,9 +121,11 @@ li {
 
 }
 .wz{
+    display: inline-block;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    width: 40%;
     margin-left: 20px;
 }
 .wz_1{
@@ -132,6 +135,7 @@ li {
 }
 .price{
     color:red;
+    margin-right: 10px;
 }
 .font{
     color: rgb(173, 173, 173);
@@ -143,6 +147,7 @@ li {
 .img_1{
     width: 15px;
     height:15px;
+    margin-top: -5px;
 
 }
 
