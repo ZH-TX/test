@@ -1,0 +1,17 @@
+.box{
+    
+    
+    
+    
+    border-bottom: 1px solid #e1e5e7;
+    /* height: 500px; */
+}
+span{
+    background-size: 117.5px 130.5px;
+    display: inline-block; width: 20px; height: 20px;
+    background-image: url(./pic/sprites.png);
+    background-repeat: no-repeat;
+}
+.img_1{
+    background-position:-99px -0px;
+}
