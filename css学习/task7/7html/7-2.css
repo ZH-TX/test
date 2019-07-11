@@ -1,0 +1,103 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+html,body{
+    width: 100%;
+    height: 100%;
+    background: rgb(41,189,224);
+}
+.header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 10%;
+    
+}
+.pic_left{
+
+}
+.h_center{
+    font-size: 18px;
+    color: white;
+}
+.pic_right{
+
+}
+.tip{
+    display: flex;
+    height: 10%;
+    background: rgb(185,233,245);
+    align-items: center;
+}
+.tip_1{
+    width: 100%;
+    margin: 0px auto;
+    
+}
+.wz_1{
+    font-size: 15px;
+    margin: 0px 20px;
+    color: white;
+}
+.box{
+    position: relative;
+    width:60px;
+    height: 60px;
+    margin: 20px;
+    border: 5px solid white;
+    background: rgb(245,201,123);
+    text-align: center;
+}
+/* 这里的尺寸设置出现问题 */
+.box_name{
+    line-height: 45px;
+  
+    
+}
+.box_num{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 15px;
+    font-size: 10px;
+    color: white;
+    background: rgb(131,176,154);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.footer{
+    width: 100%;
+    height: 15%;
+    position: fixed;
+    bottom: 0;
+    text-align: center;
+   
+
+
+}
+.bt{
+    font-size: 18px;
+    color: white;
+    width: 80%;
+    height:50px;
+    margin-bottom: 5px ;
+    background: rgb(251,180,53);
+    border:2px solid rgb(251,180,53);
+   
+
+}
