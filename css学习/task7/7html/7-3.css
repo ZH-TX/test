@@ -61,7 +61,7 @@ p{
 
 
 .box_1{
-    /* margin-bottom: 30px; */
+    margin-bottom: 30px;
     height: 29em;
     background: rgb(41,189,224);
     
@@ -81,8 +81,10 @@ p{
    
 }
 
-
-.box_2{}
+/* 什么玄学设置?? */
+.box_2{
+    margin-bottom: -30px;
+}
 .day1{
     display: flex;
     flex-direction: column;
