@@ -1,0 +1,10 @@
+.img1 {
+    /* 背景图只能用//!!!1 */
+    background: url(./pic/123.png);
+    background-repeat: no-repeat;
+    background-position: -0px -0px;
+    width: 26px;
+    height: 25px;
+    
+    
+}

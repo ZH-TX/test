@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>一个class两个类</title>
+</head>
+<style>
+    section {
+        border: 1px solid #eee;
+        padding: 0.2rem;
+    }
+
+    .icon {
+        background: url(images/iconbg.png) no-repeat left center;
+    }
+
+    .icon-editor-normal {
+        display: block;
+        height: 1.45rem;
+        width: 1.45rem;
+        background-position: -1.64rem 0;
+        background-size: 4rem 2rem;
+    }
+
+    .icon-editor-big {
+        display: block;
+        height: 2.9rem;
+        width: 2.9rem;
+        background-position: -3.28rem 0;
+        background-size: 8rem 4rem;
+    }
+
+    .icon-editord-small {
+        display: block;
+        height: 0.725rem;
+        width: 0.725rem;
+        background-position: -0.82rem 0;
+        background-size: 2rem 1rem;
+    }
+</style>
+
+<body>
+
+    <section>
+            <i class="icon icon-editor-normal"></i>  
+        <!-- 显示正常大小图标 -->
+            <i class="icon icon-editor-big"></i>  
+        <!-- 等比例放大2倍图标 -->
+            <i class="icon icon-editord-small"></i>  
+        <!-- 等比例缩小2倍图标 -->
+    </section>
+
+</body>
+
+</html>

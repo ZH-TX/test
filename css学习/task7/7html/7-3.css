@@ -1,0 +1,152 @@
+*{
+    margin: 0;
+    padding: 0;
+}       
+html,body{
+    width: 100%;
+    font-size: 62.5%;
+}
+a{
+    text-decoration: none;
+    outline: none;
+    color:white;
+}
+p{
+
+}
+.header{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 3.5em;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-bottom: 1px solid rgb(192, 191, 191);
+    
+    background: rgb(41,189,224);
+}
+.top_font{
+    color: white;
+    font-size: 2.5em;
+}
+.pic_1{
+    width: 20px;
+    margin-left: -15px;
+}
+.pic_2{
+    width: 20px;
+    margin-right: -15px;
+}
+.bg{
+    margin-top: 1em;
+    width: 160px;
+    
+}
+.jz{
+    
+    text-align: center;
+}
+
+.main{
+    margin-top: 3rem;
+    margin-bottom: 6rem;
+}
+
+
+
+
+
+
+
+
+.box_1{
+
+    height: 26em;
+    background: rgb(41,189,224);
+    
+}
+.text_1{
+    font-size: 2.5em;
+    font-weight: 700;
+    color:rgb(251,180,53) ;
+    margin: 0 4rem;
+
+}
+.text_2{
+    font-size:2em;
+    color: white;
+    margin: 1rem 4rem;
+    line-height:1.8em;
+   
+}
+
+
+.box_2{}
+.day1{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 8rem;
+    border-bottom: 2px solid rgb(206, 205, 205)
+}
+.text_top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 4rem;
+    padding-top: 0.5rem;
+}
+.text_p{
+    font-size: 2em;
+    margin: 0 4rem;
+    padding-top: 0.5rem;
+    color: rgb(195, 197, 199);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.footer{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 5em;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    /* opacity: 0.5; */
+    background: rgba(41,189,224,0.5 );
+    color: white;
+}
+.bt1{
+    color: white;
+    background: rgb(246,111,111);
+    border :0;
+    outline: none;
+    opacity: 1;
+    width: 30%;
+    height: 3em;
+    border-radius: 8px;
+}
+.bt2{
+    color: white;
+    background: rgb(251,180,53);
+    border :0;
+    outline: none;
+    
+    width: 30%;
+    height: 3em;
+    border-radius: 8px;
+
+}

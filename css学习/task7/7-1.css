@@ -4,6 +4,10 @@
     
     
 }
+a{
+    text-decoration: none;
+    outline: none;
+}
 
 html,body {
     width: 100%;
