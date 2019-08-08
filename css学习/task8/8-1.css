@@ -1,0 +1,99 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+html{
+    font-size: 62.5%;
+}
+html,body{
+    
+    background: #FAFAFA;
+    width: 100%;
+    height: 100%;
+}
+
+/* 头部 */
+.row{
+    display: flex;
+}
+
+.top-text{
+    width: 50%;
+    font-size: 1.2rem;
+    margin: 1.5rem auto;
+    margin-left: 1em;
+    color: #29b078;
+
+}
+.top-icon{
+    
+  
+    
+    margin: 1.5rem auto;
+   
+
+    
+}
+a.icon-1{
+    padding: 12px;
+    padding-right: 30px;
+    background: url(./pic/img.png) no-repeat;
+    background-position:0 0;
+}
+a.icon-2{
+    padding: 12px;
+    padding-right: 30px;
+    background: url(./pic/img.png)no-repeat;
+    background-position:0 -40px;
+}
+a.icon-3{
+    padding: 12px;
+    padding-right: 30px;
+    background: url(./pic/img.png)no-repeat;
+    background-position:0 -80px;
+}
+
+.nav li :active{
+    margin-bottom:2px solid rgb(165, 50, 50);
+    
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 主体 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 尾部 */
