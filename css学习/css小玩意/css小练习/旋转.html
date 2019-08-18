@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>动画过渡</title>
+    <link rel="stylesheet" type="text/css" href="2.css">
+    <style>
+        div {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+            transition: width 2s, height 2s, transform 2s;
+            /* -webkit-transition: width 2s, height 2s, -webkit-transform 2s; */
+            transition-delay: 0.5s;
+
+
+        }
+
+        div:hover {
+            width: 200px;
+            height: 200px;
+            background: red;
+            transform: rotate(360deg);
+            /* -webkit-transform: rotate(360deg); */
+
+        }
+    </style>
+</head>
+
+<body>
+    <div>动画过渡</div>
+
+</body>
+
+</html>

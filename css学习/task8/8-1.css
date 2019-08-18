@@ -13,21 +13,31 @@ html,body{
 }
 
 /* 头部 */
-.row{
+/* .row{
     display: flex;
-}
+} */
+
+/* .nav .navbar-default{
+    display: inline-flex;
+    flex-direction: row;
+    text-align: center;
+    justify-items: center;
+
+} */
+
+
 
 .top-text{
-    width: 50%;
+    /* width: 50%; */
     font-size: 1.2rem;
     margin: 1.5rem auto;
-    margin-left: 1em;
+    margin-left:4em;
     color: #29b078;
 
 }
 .top-icon{
     
-  
+    float: right;
     
     margin: 1.5rem auto;
    
@@ -53,11 +63,39 @@ a.icon-3{
     background-position:0 -80px;
 }
 
-.nav li :active{
-    margin-bottom:2px solid rgb(165, 50, 50);
+/* .navbar-brand.header-title{ */
+    /* display: inline-flex;
     
+    flex-direction: column; */
+    /* justify-content: center; */
+    /* color: aliceblue;
+    /* margin-top: 10px; 
+    font-size: 2em;
+    font-weight: bold; */
+/* } */
+/* .header-title>span{
+    color: aliceblue;
+    font-size: 0.1em;
+    width: 20px;
 
+} */
+li>a:hover{
+    content: "";
+    /* height: 3px; */
+    border-bottom: #FAFAFA solid 3px;
 }
+
+/* div.nav{
+    width: 100vw;
+    background: #29b078;
+} */
+/* .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover
+{
+    background: #52c595;
+}
+.navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover{
+    background: #489c7b;
+} */
 
 
 

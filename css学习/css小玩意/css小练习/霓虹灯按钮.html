@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>霓虹灯按钮</title>
+    <style>
+        body{
+            padding: 0;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            /* font-family: 'Times New Roman' */
+        }
+        a{
+            display: inline-block;
+            font-weight: bold ;
+            font-size: 20px;
+            text-decoration: none;
+            position: relative;
+            text-transform: uppercase;
+            /* letter-spacing: 4px; */
+            overflow: hidden;
+            transition: 0.5s;
+        }
+         a:hover{
+            color: rgb(196, 149, 22);
+            background: rgb(140, 212, 24); 
+            /* 阴影效果 */
+            box-shadow: 0 0 10px #52da5d77,
+            0 0 50px #52da5d77,
+            0 0 100px #52da5d77;
+            transition-delay: 1s;
+        }  
+        
+        
+       
+        a span{
+            position: absolute;
+            display: block;
+        }
+        /* 第一个 */
+        a span:nth-child(1){
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            /* 渐变色过渡 */
+            background:linear-gradient(90deg,transparent,blue);
+
+        }
+        a:hover span:nth-child(1){
+            left: 100%;
+            transition: 3s;
+        }
+        /* 第三个 */
+        a span:nth-child(3){
+            bottom: 0;
+            left: 100%;
+            width: 100%;
+            height: 2px;
+            /* 渐变色过渡 */
+            background:linear-gradient(-90deg,transparent,blue);
+
+        }
+        a:hover span:nth-child(3){
+            left: -100%;
+            transition: 2s;
+            transition-delay: 1s;
+        }
+       /* 第二个 */
+        a span:nth-child(2){
+            top: -100%;
+            right : 0%;
+            width: 2px;
+            height:100% ;
+            /* 渐变色过渡 */
+            background:linear-gradient(180deg,transparent,blue);
+
+        }
+        a:hover span:nth-child(2){
+            top: 100%;
+            transition: 1s;
+            transition-delay: 0.75s;
+        }
+        a span:nth-child(4){
+            bottom: -100%;
+            left : 0%;
+            width: 2px;
+            height:100% ;
+            /* 渐变色过渡 */
+            background:linear-gradient(360deg,transparent,blue);
+
+        }
+        /* 第四个 */
+        a:hover span:nth-child(4){
+            bottom: 100%;
+            transition: 1s;
+            transition-delay:  1.5s;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+    <a href="#">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        HELLO WORLD
+    </a>
+</body>
+</html>
+<!-- 有趣的变换方式1 -->
+        <!-- a span:nth-child(2){
+            top: -100%;
+            right: 0%;
+            width: 100%;
+            height: 2px;
+            /* 渐变色过渡 */
+            background:linear-gradient(90deg,transparent,blue);
+
+        }
+        a:hover span:nth-child(2){
+            top: 100%;
+            transition: 2s;
+        } -->
+<!-- 有趣的变换方式2 -->
+        <!-- a span:nth-child(2){
+            top: 0;
+            left: -100%;
+            width: 2px;
+            height:100% ;
+            /* 渐变色过渡 */
+            background:linear-gradient(90deg,transparent,blue);
+
+        }
+        a:hover span:nth-child(2){
+            left: 100%;
+            transition: 2s;
+        } -->

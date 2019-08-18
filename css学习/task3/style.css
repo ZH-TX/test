@@ -2,6 +2,7 @@
     margin: 0;
     padding:0;
 }
+/* img虽然是行内元素,但是可以设置宽高 ,对于图片一般只设置一个可以保持原比例缩放*/
 img{
     width: 50px;
     height: 50px;
@@ -34,6 +35,8 @@ body{
     margin-bottom: 10%;
 
 }
+
+/* footer 并没有实现,存在一些问题 */
 .footer{
     width: 100%;
    height: 20%;
