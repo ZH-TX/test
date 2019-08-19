@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>复合选择器</title>
+    <style>
+        /*内联：直接在其标签内注释，>
+        内嵌：建立一个css标签      >
+        外部：在另一个文件间css样式 ,
+        后出现的优先于先出现的，（先写最弱的样式，便于修改）
+        >
+
+
+        */
+
+
+        /*id选择器，按优先级依次排列
+        ID最强
+
+        */
+        div#h1 {
+            border-style: solid;
+            border-width: 10px;
+            border-color: green;
+            background: #000;
+
+        }
+
+        #h1 {
+            background: blue;
+
+        }
+
+
+
+
+        /*
+        类选择器,
+        优先级大于交集选择器
+
+
+        */
+
+
+        .a1 {
+            background: red;
+
+        }
+
+
+        /*标记选择器
+        大于复合选择器的效果
+
+
+        */
+        div {
+            border-style: solid;
+            border-width: 10px;
+            border-color: black;
+            margin: 10px;
+
+        }
+
+        /*后代选择器，继承,
+        便于修改样式
+
+
+        */
+        div p {
+            border-style: solid;
+            border-color: red;
+            background: #130099;
+
+
+
+        }
+
+        /*并集选择器,
+        对样式做统一补充*/
+
+
+
+        div,
+        p {
+            background: white;
+
+        }
+
+
+
+        /*交集选择器,第一个必须为标记，第二个为类或ID
+
+        */
+
+
+
+        div.a1 {
+
+            border-color: red;
+            background: red;
+            /* border-width：; */
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+
+
+        <h1 id="h1">id选择器</h1>
+        <p class="a1">类选择器</p>
+    </div>
+    <div>后代选择器<p>de 效果</p>
+    </div>
+    <div>标记选择器效果</div>
+    <div class="a1">交集选择器效果</div>
+
+</body>
+
+</html>
