@@ -6,17 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>块级居中</title>
     <style>
-    
+    body{
+        padding: 0;
+        margin: 0;
+    }
     /* 块级元素的居中
     
     
     */
-    div {
-    height:100px;
-    border: 2px dashed #f69c55;
-    /* 这里会使文字居中 */
-    text-align:center;
-    }
+   
 
     .center-block {
     margin: 0 auto;
@@ -25,21 +23,58 @@
     /* display:inline-block;
    */
     width: 8rem;
-    padding:1rem;
+    /* padding:1rem; */
     color:#fff;
     background:rgb(71, 158, 20);
+    }
+/* 静态元素对top left没有用!! 
+深刻理解position position  相当于添加了背景板.看图可以知道
+除了sataic 其他均对top 与left 产生作用;
+
+*/
+    .test2{
+        /* position: relative ; */
+
+        /* margin-top: 50%;
+        margin-left: 50%;
+        transform: translate(-50%,-50%); */
+
+        position:absolute ;
+        top:0;
+        bottom:0;
+        left:0;
+        right:0;
+        margin:auto;
+
+         width: 150px;
+        height: 150px;
+        background: rgb(14, 138, 155);
+
+
+        /* table-cell 实现 */
+        /* display: table-cell;
+
+        text-align: center;
+        vertical-align: middle; */
+
+
+       
+        /* 定位元素 */
+        /* position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50% ,-50%); */
     }
     </style>
 </head>
 <body>
     <div>
         <div class="center-block">
-            这是块级元素.center-block ;
-                margin: 0 auto有效居中;
+            这是块级元素.center-block ;margin: 0 auto有效居中;
         </div>
     </div>
     
-    <div class=""></div>
+    <div class="test2">静态top值得设置</div>
     <div class=""></div>
     <div class=""></div>
     <div class=""></div>
