@@ -164,7 +164,7 @@ div#carousel-example-generic {
     border-radius: 50%;
     border: 2px solid #b6bbb9 */
 
-
+/* 这里使用padding撑开?? */
     width: 2.6rem;
     height: 2.6rem;
     padding: 2.6rem;
@@ -223,12 +223,34 @@ h4~p{
     background: #29b078;
 }
 
+.li-circle li:first-child{
+    background: #29b078;
+}
+/* .li-circle li:nth-child(2){
+    background: #000;
+} */
 
+/* 底部图片 */
+.pic-size{
+    display: inline-block;
+    width: 19rem;
+    height: 16rem;
+    margin: 0.1em;
+    /* padding: 3rem; */
+    /* top: 50%;
+    transform: translate(50%,50%); */
+    text-align: center;
+    background: #fff;
+    vertical-align: middle;
+    border: 2px solid #ffffff;
+}
 
+.link-f li{
+    /* display: inline-block; */
+    display: inline-flex;
+    flex-direction: row;
 
-
-
-
+}
 
 
 
@@ -242,3 +264,24 @@ h4~p{
 
 
 /* 尾部 */
+
+footer{
+    /* height: 20em; */
+    background: #29b078;
+    color: white;
+}
+.bottom-box{
+    padding-top: 4em;
+}
+
+.p1{
+    font-size: 1.5em;
+    /* font-weight: bold; */
+}
+.p2{
+    font-size: 1.2em;
+}
+.bottom-font{
+    text-align: center;
+    bottom: 0;
+}
