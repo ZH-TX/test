@@ -1,0 +1,20 @@
+@media (min-width:480px )and(max-width:992px){
+
+
+}
+@media screen and (max-width:350px){
+    /* 记得and用空格隔开 */
+}
+@media  (max-width:350px){
+    a.pull-left>img{
+        /*伪元素是行内元素 正常浏览器清除浮动方法*/
+        /* width: 100%; */
+        margin-left: 4.5em;
+            
+        
+    
+    }
+   
+
+
+}
