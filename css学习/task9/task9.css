@@ -1,0 +1,173 @@
+* {
+    padding: 0;
+    margin: 0;
+
+}
+
+html {
+    font-size: 62.5%;
+}
+
+.left-div {
+    text-align: right;
+}
+
+/* 头部 */
+.head-bg {
+    /* display: inline-block; */
+    background: #1d7ad9;
+    color: white;
+    /* padding-top:0.6em ; */
+    height: 5rem;
+    line-height: 5rem;
+}
+
+.login {
+    border-left: 1px solid white;
+    padding: 0 1em;
+}
+
+.login:hover,
+.login:active {
+    background: white;
+    padding: 1.5em;
+    color: black;
+    border: ipx solid white;
+}
+
+/* 主页 */
+.main {
+    background: white;
+}
+
+.progress {
+    height: 1px;
+    width: 50%;
+    float: right;
+}
+
+.list-item {
+    text-align: right;
+}
+
+.list-item li {
+    display: inline-block;
+}
+
+.list-item li span {
+    display: inline-block;
+    padding: 0 auto;
+    text-align: center;
+
+
+    width: 20px;
+    height: 20px;
+    /* padding: 0 30px; */
+    border-radius: 50%;
+    background: #cccccc;
+    color: white;
+
+    border: 1px solid #cccccc
+        /* list-style: none; */
+
+}
+
+.list-item li:before {
+    /* contain: ""; */
+    content: "";
+    display: inline-block;
+    width: 50px;
+    height: 6px;
+
+    background: #cccccc;
+
+
+}
+
+.list-item li:last-child:after {
+    content: "";
+    display: inline-block;
+    width: 50px;
+    height: 6px;
+
+    background: #cccccc;
+
+}
+
+.list-item li span:hover {
+    background: #ff7f02;
+}
+
+
+
+
+
+
+h4 {
+    /* content: "";
+    display: inline-block; 
+    width: 2px;
+    height: 100%;*/
+
+    border-left: #1d7ad9 solid 3px;
+    padding-left: 5px;
+
+
+
+}
+
+.border-box {
+    border: #e2e2e2 solid 1px;
+    border-radius: 3px;
+}
+
+.font-color {
+    color: #1d7ad9;
+    background: #f4f4f4;
+    font-size: 18px;
+    padding: 1rem 2rem;
+}
+
+.font-color2 {
+    font-size: 15px;
+    padding: 1.5rem;
+}
+
+label.radio-inline {
+    padding-left: 50px;
+}
+
+
+label.radio {
+    padding-left: 50px;
+    font-weight: normal;
+}
+
+
+
+
+.select-box {
+    float: right;
+}
+.select-box2 {
+    display: inline-block;
+    margin-right: 0;
+}
+
+
+
+/* input:focus{
+    border:  thin solid #00FF00;
+    outline:thick solid #FF0000;
+
+} */
+
+
+
+.btn-buttom{
+    height: 20rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}

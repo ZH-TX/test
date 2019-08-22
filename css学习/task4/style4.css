@@ -34,6 +34,18 @@ body,html{
     
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
 .footer{
 
 }
@@ -116,5 +128,8 @@ input{
     
    
   
+}
+input::-webkit-input-placeholder{
+    color:#cccc;
 }
 
