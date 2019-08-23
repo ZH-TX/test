@@ -1,0 +1,63 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+body{
+    background: rgb(218, 218, 218);
+    /* opacity: .8; */
+}
+
+
+.main{
+    position: absolute ;
+    width: 300px;height: 300px;
+    background: rgb(245, 240, 240);
+    top:50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    display: flex;
+    /* 这个确定了主轴的排列方向 */
+    flex-direction: column;
+    justify-content: center;
+    /* align-items: center; */
+    /* align-content: space-between; */
+    text-align: center;
+    border-radius: 10px;
+    
+}
+
+
+.header{
+    color: #68cdd5;
+    /* 使用这个都会一起移动,其依法动全身; */
+    /* margin-top: -30px; */
+    font-weight: bold;
+}
+
+input{
+    width: 80%;
+    height: 30px;
+    margin: 10px;
+    border-radius: 3px;
+    /* outline: #68cdd5; */
+}
+input::placeholder{
+    color: #ccc;
+}
+
+input:focus{
+    border: #68cdd5 1px inset ;
+}
+
+button{
+    font-size: 20px;
+    margin-top: 20px;
+    width: 90%;
+    border-radius: 5px;
+    height: 35px;
+    color: aliceblue;
+    background: #68cdd5;
+}
+button:hover{
+    opacity: .8;
+}
