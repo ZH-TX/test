@@ -24,7 +24,7 @@ $(function () {
             return;
 
         };
-
+        //单纯的将进行跨域练习
         $.ajax({
             url: '/carrots-admin-ajax/a/login',
             type: "post",
@@ -34,9 +34,11 @@ $(function () {
                 pwd: val2
             },
             success: function () {
-                console.log('hh');
+                console.log('1132456');
                 alert("success!");
-                window.location.assign('http://dev.admin.carrots.ptteng.com/');
+
+                //assign replace reload 用法的区别;
+                // window.location.assign('http://dev.admin.carrots.ptteng.com/');
 
 
             },
