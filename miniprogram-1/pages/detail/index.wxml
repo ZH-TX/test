@@ -1,0 +1,61 @@
+<!--pages/detail/index.wxml-->
+
+<!-- 引入towxml的模板入口文件 -->
+
+<import src="/towxml/entry.wxml"/>
+
+
+
+<headers></headers>
+
+<!-- 主体 -->
+<view class="container" scroll-top='{{topNum}}'>
+    <view class="title">
+        <text>{{article.title}}</text>
+    </view>
+    <view class="info">
+        <image class="author-face" mode="aspectFit" src="{{article.author.avatar_url}}">
+        </image>
+        <view class="text">
+            <text>作者：{{article.author.loginname}}</text>
+            <text>发布于：{{article.create_at}}</text>
+            <text>浏览次数：{{article.visit_count}}</text>
+            <text>最后一次编辑：{{article.last_reply_at}}</text>
+            <text class="{{article.tab}}">来自：{{article.tabText}}</text>
+        </view>
+        <view class="mark" wx:if="{{article.mark}}">{{article.mark}}</view>
+    </view>
+    <view class="content">
+        <!-- <text>{{article.content}}</text> -->
+        <template is="entry" data="{{...article.content}}"/> 
+    </view>
+    <view class="reply">
+        <block wx:if="{{article.replies.length > 0}}" wx:for="{{article.replies}}" wx:key="unique" wx:for-item="reply">
+            <view class="reply-item">
+
+                <view class="reply-first">
+                  <image class="reply-author-face" mode="aspectFit" src="{{reply.author.avatar_url}}">
+                  </image>
+                  <text class="reply-name">{{reply.author.loginname}}</text>
+                  <text class="reply-time">{{reply.create_at}}</text>
+                
+                </view>
+                <view class="reply-two">
+                  <text class="reply-content">{{reply.content}}</text>
+
+                </view>
+                
+                
+                
+            </view>
+        </block>
+    </view>
+    
+    <loading hidden="{{!loading}}">
+        加载中...
+    </loading>
+
+    <backtotop bindtap='toTop' wx:if="{{floorstatus}}"  ></backtotop>
+</view>
+
+

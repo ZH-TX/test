@@ -1,0 +1,11 @@
+<!--pages/login/login.wxml-->
+
+<headers></headers>
+<view>
+  <view class="page-body">
+    <!-- <view class="label"></view> -->
+    <input type="text" placeholder="Access Token" maxlength="36" class="txt"/>
+    
+    <button class="btn">登录</button>
+  </view>
+</view>

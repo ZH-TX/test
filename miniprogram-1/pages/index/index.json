@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "headers":"../../components/header/header",
+    "backtotop":"../../components/backtotop/backtotop"
+
+  },
+  "enablePullDownRefresh":true
+}

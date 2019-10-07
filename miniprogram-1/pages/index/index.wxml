@@ -1,0 +1,61 @@
+<!-- index.wxml -->
+<view class="container">
+  <!-- 头部 -->
+  <headers  bindmyEvent='changebar'></headers>
+  <!-- 主体部分 -->
+  <view class="scroll-content">
+    <scroll-view 
+          scroll-y  
+          scroll-top='{{topNum}}' 
+          style="height: 100%" 
+          bindscrolltoupper="refresh" 
+          bindscrolltolower="loadMore"  
+          bindscroll="scrolltoupper">
+    
+      <!-- 进入刷新 -->
+      <block wx:if="{{isRefresh}}">
+        <loading hidden="{{!isRefresh}}">加载中...</loading>
+        <text class="is-refresh">正在刷新数据😀...</text>
+      </block>
+      <!-- 主体内容 -->
+      <block wx:for="{{topics}}" wx:key="unique" wx:for-item="topic">
+        <view class="topic-item" >
+          <!-- 判断类型 -->
+          <view class="topic-h" bindtap="viewDetail" data-id="{{topic.id}}">
+            
+            <text class="topic-type top" wx:if="{{topic.top === true}}">置顶</text>
+            <text class="topic-type jh" wx:if="{{topic.good === true}}">精华</text>
+            <text class="topic-type ask" wx:if="{{topic.tab === 'ask'}}">问答</text>
+            <text class="topic-type share" wx:if="{{topic.tab === 'share'}}">分享</text>
+            <text class="topic-type job" wx:if="{{topic.tab === 'job'}}">招聘</text>
+            {{topic.title}}
+            <!-- <text class="topic-title" bindtap="viewDetail" data-id="{{topic.id}}">
+              {{topic.title}}
+            </text> -->
+          </view>
+          <view class="topic-more" bindtap="viewDetail" data-id="{{topic.id}}" >
+            <image class="author-face" mode="aspectFit" src="{{topic.author.avatar_url}}"></image>
+            <view class="text">
+              <text>{{topic.author.loginname}}</text>
+              <view class="topic-re-vi fr">
+                <text class="re">{{topic.reply_count}}</text>/{{topic.visit_count}}
+                
+              </view>
+            </view>
+            <view class="text">
+              <text class="time">时间：{{topic.create_at}} ,</text>
+              <text class="fr"> {{topic.last_reply_at}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+      <!-- 加载 -->
+      <view class="is-loadMore">
+        <text wx:if="{{isLoadMore}}">正在加载更多数据...</text>
+      </view>
+    
+    </scroll-view>
+  </view>
+  <!-- 回到顶部 -->   
+</view>
+<backtotop bindtap='toTop'  wx:if='{{floorstatus}}'   ></backtotop>

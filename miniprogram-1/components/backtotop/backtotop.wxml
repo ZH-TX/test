@@ -1,0 +1,2 @@
+<!--components/backtotop/backtotop.wxml-->
+<view class="goTop" bindtap="" >回到顶部</view>

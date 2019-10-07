@@ -1,0 +1,28 @@
+<!-- components/heder/header.wxml -->
+<view class="page">
+    <view class="tab-nav" hidden="{{boolean}}">
+        <view class="tab-nav-item" data-tab="all"  data-name="全部" bindtap="tabTo">
+            全部
+        </view>
+        <view class="tab-nav-item" data-tab="good" data-name="精华" bindtap="tabTo">
+            精华
+        </view>
+        <view class="tab-nav-item " data-tab="share" data-name="分享" bindtap="tabTo">
+            分享
+        </view>
+        <view class="tab-nav-item" data-tab="ask" data-name="问答" bindtap="tabTo">
+            问答
+        </view>
+        <view class="tab-nav-item " data-tab="job" data-name="招聘" bindtap="tabTo">
+            招聘
+        </view>
+    </view>
+    <view bindtap="changeBar">菜单</view>
+    <view>
+        {{tabName}}
+        
+    </view>
+    <view bindtap="">
+        <navigator url="/pages/login/login">登录</navigator>
+    </view>
+</view>

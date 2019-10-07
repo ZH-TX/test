@@ -1,0 +1,122 @@
+/**index.wxss**/
+
+
+
+
+.scroll-content {
+    position: absolute;
+    top: 72rpx;
+    bottom: 0;
+    width: 100%;
+}
+
+.tab-nav-item {
+    display: inline-block;
+    width: 20%;
+    color: #80bd01;
+    text-align: center;
+    line-height: 72rpx;
+    font-size: 28rpx;
+    position: relative;
+}
+
+.current::after {
+    content: "";
+    height: 5px;
+    position: absolute;
+    left: 20%;
+    right: 20%;
+    bottom: -3px;
+    background: #80bd01;
+}
+
+
+.is-refresh {
+    padding-top: 20rpx;
+
+}
+
+
+
+.topic-item {
+    padding: 30rpx 20rpx;
+    border-bottom: 1px solid #cccccc;
+}
+
+.topic-h {
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    height: 50rpx;
+    padding-right: 20rpx;
+    overflow: hidden;
+    word-break: break-all;
+    margin-bottom: 16rpx;
+}
+
+.topic-type {
+    font-size: 30rpx;
+    height: 20rpx;
+    width: 40rpx;
+    border-radius: 5px;
+    color: white;
+    padding: 2px 4px;
+    margin-right: 4px;
+}
+
+.top {
+    background: #e74c3c;
+   
+}
+
+.jh {
+    background: #e67e22;
+}
+
+.ask {
+    background: gray;
+}
+
+.share {
+    background: #00b4ff;
+}
+
+.job {
+    background: #ff2ccf;
+}
+
+.topic-title {
+    font-weight: bold;
+    font-size: 28rpx;
+    line-height: 40rpx;
+}
+
+.topic-more {
+    padding-left: 100rpx;
+    overflow: hidden;
+}
+
+.author-face {
+    float: left;
+    height: 80rpx;
+    width: 80rpx;
+    overflow: hidden;
+    border-radius: 40rpx;
+    margin-left: -100rpx;
+}
+
+.text {
+    display: flex; 
+    justify-content: space-between;
+    padding: 20rpx 10rpx;
+    line-height: 40rpx;
+}
+.time{
+    width: 60%;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+}
+.re {
+    color: green;
+}

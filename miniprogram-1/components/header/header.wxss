@@ -1,0 +1,41 @@
+/* components/heder/header.wxss */
+.page{
+  display: flex;
+  /* border-bottom: 2px solid rgb(214, 210, 210); */
+  box-shadow: 0 0 4px rgba(0,0,0,0.25);
+  align-items: center;
+  justify-content: space-between;
+  background:#fff;
+  z-index: 9;
+  
+
+  /* 定位 */
+  /* height: 88rpx; */
+  height: 44px;
+  position: fixed;
+  top: 0;
+  left:0;
+  right: 0;
+
+  padding: 0 20rpx;
+}
+
+.list-img{
+  width:40px;
+  height: 40px;
+}
+
+.tab-nav{
+  /* position: relative; */
+  background: rgb(117, 103, 103);
+
+
+  margin: 100rpx 0;
+  border-top: 1px solid #d4d4d4;
+  /* overflow: hidden; */
+  padding-top: 50%;
+
+}
+
+
+
