@@ -26,16 +26,22 @@
 	<link rel="stylesheet" href="js/love.min.js">
 	<link rel="stylesheet" href="js/love.src.js">
 
+
 	<title>I think I'm going to confess now</title>
 	<link rel="stylesheet" href="css/all.min.css">
 </head>
 
 <body>
+	<div>
+		<div class="audioTips" onclick="$('#ce').click()">没有声音? 请点击我哦
+			<audio id="music" controls src="music/123.mp3" preload type="audio/mp3" autoplay loop></audio>
+		</div>
+	</div>
 	<div class="flowtime">
 		<div class="ft-section section-1" data-id="section-1">
 			<div id="/section-1/page-1" class="ft-page page-1" data-id="page-1">
 				<p class="text1" id="ce"> 以前的我</p>
-				<p class="text2">一个人的生活</p>
+				<p class="text2">一个人的生活 ↓</p>
 
 			</div>
 			<div id="/section-1/page-2" class="ft-page page-2" data-id="page-2">
@@ -282,11 +288,10 @@
 					呵护你<br />
 					<br />
 					<br />
-					你喜欢的人的名字
+					清林
 					<spen id="dianwo">我们在一起吧</spen><br>
 
-					<spen id="fr">清林</spen><br>
-
+					<spen id="fr" style="font-size: 12px;">esc 查看全部</spen><br>
 
 				</p>
 			</div>
@@ -295,9 +300,9 @@
 
 
 
-	<!-- <audio controls src="music/123.mp3" preload="auto" type="audio/mp3" autoplay loop></audio> -->
 	<!-- <video controls src="music/123.mp3" preload="auto" type="audio/mp3" autoplay loop></video> -->
-	<embed src="music/123.mp3" width="10" height="10"></embed>
+	<!-- <embed src="music/123.mp3" width="10" height="10"></embed> -->
+	<embed style="display: none;" preload src="music/123.mp3" width="1" height="1"></embed>
 
 	<script src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
 
