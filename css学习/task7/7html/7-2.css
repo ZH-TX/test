@@ -175,6 +175,8 @@ div.main{
 
 } 
 
+/* 在移动端可以使用点击 :hover达到变色的功能(很妙) */
+
 .box:hover .image-box{ 
 
  display: flex;
