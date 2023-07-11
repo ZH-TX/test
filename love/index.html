@@ -14,7 +14,7 @@
 	<link rel="stylesheet" href="js/love.src.js">
 
 
-	<title>💘清林我喜欢你💘</title>
+	<title>💘林清秋💘</title>
 	<link rel="stylesheet" href="css/all.min.css">
 </head>
 
@@ -29,6 +29,7 @@
 			<div id="/section-1/page-1" class="ft-page page-1" data-id="page-1">
 				<p class="text1" id="ce"> 以前的我</p>
 				<p class="text2">一个人的生活 ↓</p>
+				<p class="text2" style="font-size:12px;">键盘↓查看</p>
 
 			</div>
 			<div id="/section-1/page-2" class="ft-page page-2" data-id="page-2">
@@ -50,7 +51,7 @@
 				<img src='img/iali19.jpg' alt="{text_4}" />
 			</div>
 			<div id="/section-2/page-2" class="ft-page page-6" data-id="page-2">
-				<h2 class="center-text">一个人去旅游</h2>
+				<h2 class="center-text">一个人发呆</h2>
 				<img src='img/iali29.jpg' alt="{text_5}" />
 			</div>
 			<div id="/section-2/page-3" class="ft-page page-7" data-id="page-3">
@@ -58,7 +59,10 @@
 				<img src='img/iali60.jpg' alt="{text_6}" />
 			</div>
 			<div id="/section-2/page-4" class="ft-page page-8 full-img" data-id="page-4">
-				<h3>一起陪我。</h3>
+				<h3>一起陪我
+					<div>度过余生的日子。</div>
+				</h3>
+
 				<img src='img/iali51.jpg' alt="{text_7}" />
 			</div>
 			<div id="/section-2/page-5" class="ft-page page-9" data-id="page-5">
@@ -239,7 +243,7 @@
 				<img src='img/iali65.jpg' alt="{text_62}" />
 			</div>
 			<div id="/section-8/page-4" class="ft-page page-49 full-img" data-id="page-4">
-				<p class='text'>这些话><br>大部分</p>
+				<p class='text'>这些话<br>大部分</p>
 
 				<img src='img/iali71.jpg' alt="{text_64}" />
 			</div>
@@ -271,12 +275,13 @@
 				<p class="text">
 					我希望你<br />
 					能给我一个机会<br />
-					让我照顾你<br />
-					呵护你<br />
+					让我能陪你一起走下去<br />
 					<br />
 					<br />
-					清林
-					<spen id="dianwo">我们在一起吧</spen><br>
+					<span style="color: red;">清林</span>
+					<spen id="dianwo" style="cursor: pointer;">我们在一起吧</spen><br>
+					<!-- <span>我想和你一起经历更多的美好时光，与你共度余生。</span> -->
+
 
 					<spen id="fr" style="font-size: 12px;">esc 查看全部</spen><br>
 
@@ -295,6 +300,38 @@
 
 	<script src="js/all.min.js"></script>
 	<script src="js/love.min.js"></script>
+	<script>
+		// $(document).on('click', function () {
+		// 	alert("我喜欢你很久了, 可是一直没有找到合适的机会和你说");
+		// })
+
+		// document.addEventListener("DOMContentLoaded", function () {
+		// 	var lazyImages = document.querySelectorAll('img[src]');
+
+		// 	var lazyLoad = function () {
+		// 		for (var i = 0; i < lazyImages.length; i++) {
+		// 			var image = lazyImages[i];
+		// 			if (image.getBoundingClientRect().top <= window.innerHeight && image.getBoundingClientRect().bottom >=
+		// 				0 && getComputedStyle(image).display !== 'none') {
+		// 				image.src = image.getAttribute('src');
+		// 				image.removeAttribute('src');
+		// 			}
+		// 		}
+
+		// 		if (lazyImages.length === 0) {
+		// 			window.removeEventListener('scroll', lazyLoad);
+		// 			window.removeEventListener('resize', lazyLoad);
+		// 			window.removeEventListener('orientationchange', lazyLoad);
+		// 		}
+		// 	};
+
+		// 	window.addEventListener('scroll', lazyLoad);
+		// 	window.addEventListener('resize', lazyLoad);
+		// 	window.addEventListener('orientationchange', lazyLoad);
+		// 	lazyLoad();
+		// });
+	</script>
+
 
 
 </body>

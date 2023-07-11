@@ -1366,3 +1366,6 @@ audio {
   height: 2px;
   opacity: 0;
 }
+.ft-overview {
+  background: url(../img/520bg.jpg) 100% 100%;
+}
