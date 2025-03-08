@@ -42,9 +42,10 @@
   }
   // 随机颜色
   function randomColor() {
-
     return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math
       .random() * 255)) + ")";
-
   }
+
+  Flowtime.showProgress(true);
+  Flowtime.start();
 }());
