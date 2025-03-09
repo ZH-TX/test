@@ -6,33 +6,44 @@
 
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<link rel="icon" href="favicon.ico" type="image/ico">
 	<link rel="stylesheet" href="js/all.min.js">
 	<link rel="stylesheet" href="js/brav1toolbox.js">
 	<link rel="stylesheet" href="js/flowtime.js">
 	<!-- <link rel="stylesheet" href="js/audio.min.js"> -->
 
 
-	<title>💘刘娇💘</title>
+	<title>💖刘娇💖</title>
 	<link rel="stylesheet" href="css/all.min.css">
 </head>
 
 <body>
 	<div>
 		<div class="audioTips">
-			<audio id="music" controls src="music/123.mp3" preload type="audio/mp3" autoplay loop></audio>
+			<!-- <audio id="music" controls src="music/123.mp3" preload type="audio/mp3" autoplay loop></audio> -->
 			<script>
-				document.addEventListener('click', () => {
+				let isPlay = false
+
+				function autoPlay() {
+					if (isPlay) {
+						document.removeEventListener('click', autoPlay)
+						return;
+					};
+					isPlay = true
 					document.getElementById('music').play();
-				});
+				}
+
+				document.addEventListener('click', autoPlay);
 			</script>
 		</div>
 	</div>
 	<div class="flowtime">
 		<div class="ft-section section-1" data-id="section-1">
-			<div id="/section-1/page-1" class="ft-page page-1" data-id="page-1">
+			<div id="/section-1/page-1" class="ft-page page-1" data-id="page-1" data-title="娇娇">
 				<p class="text1" id="ce"> 以前的我</p>
-				<p class="text2">一个人的生活 ↓</p>
-				<p class="text2" style="font-size:12px; cursor: pointer;">键盘↓查看(或者点击我)</p>
+				<p class="text2">一个人的生活 </p>
+				<p class="text2" style="display: inline-block; font-size:20px; cursor: pointer;" onclick="Flowtime.next()">
+					键盘↓查看(或者点击我)</p>
 
 			</div>
 			<div id="/section-1/page-2" class="ft-page page-2" data-id="page-2">
@@ -276,17 +287,19 @@
 			<div id="/section-9/page-4" class="ft-page page-55 right-img" data-id="page-4">
 				<img src='img/14915.jpg' alt="{text_73}" />
 				<p class="text">
-					我希望你<br />
-					能给我一个机会<br />
-					让我能陪你一起走下去<br />
+					我希望与你<br />
+					一起走下去~<br />
+
 					<br />
 					<br />
-					<span style="color: red;">刘娇</span>
+					<span style="color: red;">娇宝宝</span>
 					<spen id="dianwo" style="cursor: pointer;">我们在一起吧</spen><br>
 					<!-- <span>我想和你一起经历更多的美好时光，与你共度余生。</span> -->
 
+					<br>
+					<span style="font-size: 12px; padding:16px 0; cursor: pointer;" id='esc' onclick="lookAll(event)">
+						esc查看全部(点击我~)</span>
 
-					<spen id="fr" style="font-size: 12px;" onclick="Flowtime.toggleOverview()">esc 查看全部</spen><br>
 
 				</p>
 			</div>
@@ -294,16 +307,19 @@
 	</div>
 
 
-
-	<!-- <video controls src="music/123.mp3" preload="auto" type="audio/mp3" autoplay loop></video> -->
-	<!-- <embed src="music/123.mp3" width="10" height="10"></embed> -->
-	<!-- <embed style="display: none;" preload src="music/123.mp3" width="1" height="1"></embed> -->
-
 	<script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
 
 	<script src="js/all.min.js"></script>
 	<script src="js/love.js"></script>
 	<script>
+		function lookAll(e) {
+			Flowtime.toggleOverview(true)
+			e.stopPropagation();
+			e.preventDefault();
+			return false
+		}
+		// $('#esc').on('click', lookAll)
+
 		// $(document).on('click', function () {
 		// 	alert("我喜欢你很久了, 可是一直没有找到合适的机会和你说");
 		// })
