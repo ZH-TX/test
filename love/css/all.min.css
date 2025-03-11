@@ -558,8 +558,13 @@ button {
   max-height: 100%;
   display: block;
   margin: 0 auto;
-  object-fit: contain;
 }
+@media screen and (max-width: 520px) {
+  .flowtime img {
+    object-fit: contain;
+  }
+}
+
 .flowtime .stack-center {
   text-align: center;
   white-space: nowrap;
@@ -636,7 +641,7 @@ button {
 .ft-overview .section-5 {
   margin-top: 60%;
 }
-/* .ft-overview .section-5::before {
+.ft-overview .section-5::before {
   display: inline-block;
   position: absolute;
   content: "刘娇";
@@ -645,8 +650,9 @@ button {
   width: 100%;
   height: 100%;
   top: -100%;
-  color: #a54479;
-} */
+  color: #800080;
+  /* color:  #b91670; */
+}
 .ft-overview .section-6 {
   margin-top: 0;
 }

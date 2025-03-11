@@ -1,39 +1,80 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+
 <head>
-    <meta charset="utf-8">
-    <title>恭喜，站点创建成功！</title>
-    <style>
-        .container {
-            width: 60%;
-            margin: 10% auto 0;
-            background-color: #f0f0f0;
-            padding: 2% 5%;
-            border-radius: 10px
-        }
+	<meta charset="UTF-8">
+	<title>一封信</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin-top: 30px;
+			text-align: center
+		}
 
-        ul {
-            padding-left: 20px;
-        }
+		.content {
+			/* width: 500px; */
+		}
 
-            ul li {
-                line-height: 2.3
-            }
+		#text {
+			display: inline-block;
+			white-space: pre-wrap;
+			line-height: 2;
+		}
 
-        a {
-            color: #20a53a
-        }
-    </style>
+		#look {
+			cursor: pointer;
+		}
+	</style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>恭喜, 站点创建成功！</h1>
-        <h3>这是默认index.html，本页面由系统自动生成</h3>
-        <ul>
-            <li>本页面在FTP根目录下的index.html</li>
-            <li>您可以修改、删除或覆盖本页面</li>
-            <li>FTP相关信息，请到“面板系统后台 > FTP” 查看</li>
-        </ul>
-    </div>
+	<div class="content">
+
+		<h1>一封信</h1>
+		<div id="text"></div>
+
+		<div id="look">点击查看</div>
+	</div>
+
+	<script>
+		const text = `娇娇，我会牵着你的手，走到满头白发的那一天，
+我会守护你生命里的精彩，并陪伴你一路精彩下去。
+你的幸福快乐，是我一生的追求。
+我会每一天带着笑脸，和你说早安，
+我会每一晚与你道声晚安再入梦乡，
+我会带你去所有你想去的地方，
+陪你闹看你笑
+历经你生命中所有的点点滴滴。
+我期待这一生与你一起走过，
+我期待与你慢慢变老
+等我们老到哪儿也去不了，
+还能满载着一生的幸福快乐 ！
+
+我会为我们的未来撑起一片天空，
+为我们的将来担负起一生的责任，
+愿意为你去做每一件能让你开心快乐的事。
+所有我们经历的点点滴滴，
+都是我们一辈子最美的回忆。
+我愿意爱你直到老去！`;
+
+		let index = 0;
+		const speed = 200; // 控制打字速度
+
+		function typeWriter() {
+			if (index < text.length) {
+				document.getElementById('text').innerHTML += text.charAt(index);
+				index++;
+				setTimeout(typeWriter, speed);
+			}
+		}
+
+		// typeWriter();
+		// TODO 慢慢引导查看更多??
+		const dom = document.querySelector('#look')
+		dom.addEventListener('click', () => {
+			window.location.href = "./love"
+		})
+	</script>
 </body>
+
 </html>
