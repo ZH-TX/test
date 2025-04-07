@@ -3,7 +3,9 @@
 
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>💌一封信💌</title>
+
 	<style>
 		body {
 			font-family: Arial, sans-serif;
@@ -21,6 +23,12 @@
 			white-space: pre-wrap;
 			line-height: 2;
 		}
+
+		/* @media screen and (max-width: 520px) {
+			#text {
+				font-size: 28px;
+			}
+		} */
 
 		#look {
 			cursor: pointer;
@@ -157,7 +165,6 @@
 		function autoScrollToBottom(targetElement) {
 			const HEI = document.documentElement.clientHeight
 			const isOverflow = targetElement.scrollHeight >= HEI - 50;
-			console.log(isOverflow);
 			if (isOverflow) {
 				// 使用 requestAnimationFrame 优化滚动效果 
 				requestAnimationFrame(() => {
