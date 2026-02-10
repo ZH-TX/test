@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 
 <html lang="zh">
 
@@ -20,24 +20,27 @@
 <body>
 	<div>
 		<div class="audioTips">
-			<audio id="music" controls src="music/123.mp3" preload type="audio/mp3" autoplay loop></audio>
+			<audio id="music" src="music/123.mp3" preload loop></audio>
 			<script>
-				let isPlay = false
-
-				function autoPlay() {
-					if (isPlay) {
-						document.removeEventListener('click', autoPlay)
-						return;
-					};
-					isPlay = true
-					document.getElementById('music').play();
-				}
-				document.addEventListener('click', autoPlay);
+				(function() {
+					var music = document.getElementById('music');
+					var events = ['click', 'touchstart', 'keydown', 'pointerdown'];
+					
+					function playMusic() {
+						music.play().catch(function() {});
+						events.forEach(function(e) {
+							document.removeEventListener(e, playMusic, true);
+						});
+					}
+					
+					events.forEach(function(e) {
+						document.addEventListener(e, playMusic, true);
+					});
+				})();
 			</script>
-			<!-- 支持微信环境 -->
 			<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 			<script>
-				document.addEventListener('WeixinJSBridgeReady', () => {
+				document.addEventListener('WeixinJSBridgeReady', function() {
 					document.getElementById('music').play();
 				});
 			</script>
