@@ -5,96 +5,397 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>💌一封信💌</title>
+	<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
 
 	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
 		body {
-			font-family: Arial, sans-serif;
-			margin-top: 30px;
-			text-align: center
+			font-family: 'Ma Shan Zheng', cursive, Arial, sans-serif;
+			min-height: 100vh;
+			overflow-x: hidden;
+			position: relative;
+		}
+
+		/* 动态星空渐变背景 */
+		.background {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #e94560 75%, #ff6b9d 100%);
+			background-size: 400% 400%;
+			animation: gradientShift 15s ease infinite;
+			z-index: -3;
+		}
+
+		@keyframes gradientShift {
+			0% { background-position: 0% 50%; }
+			50% { background-position: 100% 50%; }
+			100% { background-position: 0% 50%; }
+		}
+
+		/* 星星粒子效果 */
+		.stars-container {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: -2;
+			pointer-events: none;
+		}
+
+		.star {
+			position: absolute;
+			width: 3px;
+			height: 3px;
+			background: white;
+			border-radius: 50%;
+			animation: twinkle 2s ease-in-out infinite;
+			box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+		}
+
+		@keyframes twinkle {
+			0%, 100% { opacity: 0.3; transform: scale(1); }
+			50% { opacity: 1; transform: scale(1.5); }
+		}
+
+		/* 樱花飘落动画 */
+		.sakura-container {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: -1;
+			pointer-events: none;
+		}
+
+		.sakura {
+			position: absolute;
+			width: 15px;
+			height: 15px;
+			background: linear-gradient(135deg, #ffb7c5 0%, #ff69b4 100%);
+			border-radius: 50% 0 50% 50%;
+			animation: fall linear infinite;
+			opacity: 0.8;
+		}
+
+		@keyframes fall {
+			0% {
+				transform: translateY(-100px) rotate(0deg) translateX(0);
+				opacity: 0;
+			}
+			10% {
+				opacity: 0.8;
+			}
+			90% {
+				opacity: 0.8;
+			}
+			100% {
+				transform: translateY(100vh) rotate(720deg) translateX(100px);
+				opacity: 0;
+			}
+		}
+
+		/* 爱心雨 */
+		.heart-rain-container {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: -1;
+			pointer-events: none;
+		}
+
+		.heart-rain {
+			position: absolute;
+			font-size: 20px;
+			animation: heartFall linear infinite;
+			opacity: 0.6;
+		}
+
+		@keyframes heartFall {
+			0% {
+				transform: translateY(-50px) rotate(0deg);
+				opacity: 0;
+			}
+			10% {
+				opacity: 0.6;
+			}
+			90% {
+				opacity: 0.6;
+			}
+			100% {
+				transform: translateY(100vh) rotate(360deg);
+				opacity: 0;
+			}
+		}
+
+		/* 点击爱心特效 */
+		.click-heart {
+			position: fixed;
+			font-size: 24px;
+			animation: heartFloat 1s ease-out forwards;
+			pointer-events: none;
+			z-index: 1000;
+		}
+
+		@keyframes heartFloat {
+			0% {
+				transform: translateY(0) scale(0);
+				opacity: 1;
+			}
+			50% {
+				transform: translateY(-50px) scale(1.5);
+				opacity: 0.8;
+			}
+			100% {
+				transform: translateY(-100px) scale(0.5);
+				opacity: 0;
+			}
+		}
+
+		/* 爱心爆炸效果 */
+		.heart-explosion {
+			position: fixed;
+			font-size: 16px;
+			animation: heartExplode 0.8s ease-out forwards;
+			pointer-events: none;
+			z-index: 1000;
+		}
+
+		@keyframes heartExplode {
+			0% {
+				transform: translate(0, 0) scale(0);
+				opacity: 1;
+			}
+			100% {
+				opacity: 0;
+			}
+		}
+
+		/* 毛玻璃效果容器 */
+		.glass-container {
+			position: relative;
+			z-index: 10;
+			background: rgba(255, 255, 255, 0.1);
+			backdrop-filter: blur(10px);
+			-webkit-backdrop-filter: blur(10px);
+			border: 1px solid rgba(255, 255, 255, 0.2);
+			border-radius: 20px;
+			padding: 40px;
+			margin: 40px auto;
+			max-width: 800px;
+			box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 		}
 
 		.content {
-			/* width: 500px; */
-			padding-bottom: 66px;
+			padding-bottom: 100px;
+		}
+
+		h1 {
+			color: #fff;
+			font-size: 48px;
+			margin-bottom: 30px;
+			text-shadow: 0 0 20px rgba(255, 107, 157, 0.8);
+			animation: titleGlow 2s ease-in-out infinite;
+		}
+
+		@keyframes titleGlow {
+			0%, 100% { text-shadow: 0 0 20px rgba(255, 107, 157, 0.8); }
+			50% { text-shadow: 0 0 40px rgba(255, 107, 157, 1), 0 0 60px rgba(255, 107, 157, 0.6); }
 		}
 
 		#text {
 			display: inline-block;
 			white-space: pre-wrap;
-			line-height: 2;
+			line-height: 2.2;
+			color: #fff;
+			font-size: 22px;
+			text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 		}
 
-		/* @media screen and (max-width: 520px) {
-			#text {
-				font-size: 28px;
-			}
-		} */
-
-		#look {
-			cursor: pointer;
+		/* 打字机光标效果 */
+		.cursor {
+			display: inline-block;
+			width: 3px;
+			height: 24px;
+			background: #ff6b9d;
+			margin-left: 2px;
+			animation: cursorBlink 0.8s infinite;
+			vertical-align: middle;
 		}
 
-		.btn-ripple {
-			padding: 18px 45px;
-			background: #6347ff;
+		@keyframes cursorBlink {
+			0%, 100% { opacity: 1; }
+			50% { opacity: 0; }
+		}
+
+		/* 心跳按钮 */
+		.heart-button {
+			padding: 18px 50px;
+			background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 50%, #ffb3c6 100%);
 			border: none;
-			border-radius: 12px;
+			border-radius: 50px;
 			color: white;
-			position: relative;
-			overflow: hidden;
-			transition: 0.4s;
+			font-size: 20px;
+			font-family: 'Ma Shan Zheng', cursive;
+			cursor: pointer;
 			position: fixed;
 			left: 50%;
-			bottom: 2%;
-			transform: translate(-50%);
-			width: 50%;
+			bottom: 30px;
+			transform: translateX(-50%);
+			box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+			transition: all 0.3s ease;
+			animation: heartbeat 1.5s ease-in-out infinite;
+			z-index: 100;
 		}
 
-		.btn-ripple span {
-			position: relative;
-			z-index: 1;
+		.heart-button:hover {
+			transform: translateX(-50%) scale(1.1);
+			box-shadow: 0 6px 25px rgba(255, 107, 157, 0.6);
 		}
 
-		.btn-ripple::after {
-			content: '';
+		.heart-button:active {
+			transform: translateX(-50%) scale(0.95);
+		}
+
+		@keyframes heartbeat {
+			0%, 100% { transform: translateX(-50%) scale(1); }
+			50% { transform: translateX(-50%) scale(1.05); }
+		}
+
+		/* 页面过渡动画 - 星尘效果 */
+		.stardust-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: radial-gradient(circle, rgba(255, 107, 157, 0.9) 0%, rgba(26, 26, 46, 1) 100%);
+			z-index: 9999;
+			display: none;
+			pointer-events: none;
+		}
+
+		.stardust-particle {
 			position: absolute;
-			width: 100px;
-			height: 100px;
-			background: rgba(255, 255, 255, 0.4);
+			width: 4px;
+			height: 4px;
+			background: white;
 			border-radius: 50%;
-			transform: translate(-50%, -50%) scale(0);
-			animation: ripple 1s ease-out;
-			opacity: 0;
+			animation: stardustExplode 1.5s ease-out forwards;
 		}
 
-		@keyframes ripple {
-			from {
-				transform: translate(-50%, -50%) scale(0);
+		@keyframes stardustExplode {
+			0% {
+				transform: translate(0, 0) scale(1);
 				opacity: 1;
 			}
-
-			to {
-				transform: translate(-50%, -50%) scale(3);
+			100% {
+				transform: translate(var(--tx), var(--ty)) scale(0);
 				opacity: 0;
 			}
 		}
 
-		.btn-ripple:active::after {
-			animation: ripple 0.6s;
+		/* 移动端响应式适配 */
+		@media screen and (max-width: 768px) {
+			.glass-container {
+				padding: 25px;
+				margin: 20px;
+				border-radius: 15px;
+			}
+
+			h1 {
+				font-size: 36px;
+				margin-bottom: 20px;
+			}
+
+			#text {
+				font-size: 18px;
+				line-height: 2;
+			}
+
+			.cursor {
+				height: 20px;
+			}
+
+			.heart-button {
+				padding: 15px 40px;
+				font-size: 18px;
+				bottom: 20px;
+			}
+
+			.sakura {
+				width: 12px;
+				height: 12px;
+			}
+
+			.heart-rain {
+				font-size: 16px;
+			}
+		}
+
+		@media screen and (max-width: 480px) {
+			.glass-container {
+				padding: 20px;
+				margin: 15px;
+			}
+
+			h1 {
+				font-size: 28px;
+			}
+
+			#text {
+				font-size: 16px;
+			}
+
+			.heart-button {
+				padding: 12px 35px;
+				font-size: 16px;
+			}
 		}
 	</style>
 </head>
 
 <body>
-	<div class="content">
+	<!-- 动态星空渐变背景 -->
+	<div class="background"></div>
 
-		<h1>一封信</h1>
-		<div id="text"></div>
+	<!-- 星星粒子容器 -->
+	<div class="stars-container" id="starsContainer"></div>
 
-		<div id="look" class="btn-ripple" style="display: none;" title="点我点我~">查看更多</div>
+	<!-- 樱花容器 -->
+	<div class="sakura-container" id="sakuraContainer"></div>
+
+	<!-- 爱心雨容器 -->
+	<div class="heart-rain-container" id="heartRainContainer"></div>
+
+	<!-- 页面过渡动画覆盖层 -->
+	<div class="stardust-overlay" id="stardustOverlay"></div>
+
+	<!-- 毛玻璃效果容器 -->
+	<div class="glass-container">
+		<div class="content">
+			<h1>一封信</h1>
+			<div id="text"></div>
+			<span class="cursor" id="cursor"></span>
+		</div>
 	</div>
 
+	<!-- 心跳按钮 -->
+	<button class="heart-button" id="heartButton" style="display: none;">查看更多 ❤️</button>
+
 	<script>
+		// 文案内容
 		const text = `娇娇，很高兴认识你，
 虽然与你相处的时间不是很久,
 但是你是我人生中的许多第一次;
@@ -115,63 +416,197 @@
 我希望与你这般的第一次可以一直延续下去,
 带着你走遍这世间的山海,
 踏过这一路的坎坷`;
-		// 		const text = `娇娇，我会牵着你的手，走到满头白发的那一天，
-		// 我会守护你生命里的精彩，并陪伴你一路精彩下去。
-		// 你的幸福快乐，是我一生的追求。
-		// 我会每一天带着笑脸，和你说早安，
-		// 我会每一晚与你道声晚安再入梦乡，
-		// 我会带你去所有你想去的地方，
-		// 陪你闹看你笑
-		// 历经你生命中所有的点点滴滴。
-		// 我期待这一生与你一起走过，
-		// 我期待与你慢慢变老
-		// 等我们老到哪儿也去不了，
-		// 还能满载着一生的幸福快乐 ！
 
-		// 我会为我们的未来撑起一片天空，
-		// 为我们的将来担负起一生的责任，
-		// 愿意为你去做每一件能让你开心快乐的事。
-		// 所有我们经历的点点滴滴，
-		// 都是我们一辈子最美的回忆。
-		// 我愿意爱你直到老去！`;
+		// 检测是否为移动设备
+		const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-		let index = 0;
-		const speed = 200; // 控制打字速度
+		// 创建星星粒子
+		function createStars() {
+			const container = document.getElementById('starsContainer');
+			const starCount = isMobile ? 50 : 100;
 
-		function typeWriter() {
-			if (index < text.length) {
-				document.getElementById('text').innerHTML += text.charAt(index);
-				index++;
-				setTimeout(typeWriter, speed);
-
-
-			} else {
-				const dom = document.querySelector('#look')
-				dom.style.display = ''
+			for (let i = 0; i < starCount; i++) {
+				const star = document.createElement('div');
+				star.className = 'star';
+				star.style.left = Math.random() * 100 + '%';
+				star.style.top = Math.random() * 100 + '%';
+				star.style.animationDelay = Math.random() * 2 + 's';
+				star.style.animationDuration = (Math.random() * 2 + 1) + 's';
+				container.appendChild(star);
 			}
-			const content = document.querySelector('.content')
-			autoScrollToBottom(content)
 		}
 
-		typeWriter();
-		// TODO 慢慢引导查看更多??
-		const dom = document.querySelector('#look')
-		dom.addEventListener('click', () => {
-			confirm('想查看更多, 得亲我一口哦~')
-			window.location.href = "./love"
-		})
+		// 创建樱花
+		function createSakura() {
+			const container = document.getElementById('sakuraContainer');
+			const sakuraCount = isMobile ? 15 : 30;
 
+			for (let i = 0; i < sakuraCount; i++) {
+				const sakura = document.createElement('div');
+				sakura.className = 'sakura';
+				sakura.style.left = Math.random() * 100 + '%';
+				sakura.style.animationDuration = (Math.random() * 5 + 8) + 's';
+				sakura.style.animationDelay = Math.random() * 10 + 's';
+				container.appendChild(sakura);
+			}
+		}
 
+		// 创建爱心雨
+		function createHeartRain() {
+			const container = document.getElementById('heartRainContainer');
+			const heartCount = isMobile ? 8 : 15;
+
+			for (let i = 0; i < heartCount; i++) {
+				const heart = document.createElement('div');
+				heart.className = 'heart-rain';
+				heart.innerHTML = '❤️';
+				heart.style.left = Math.random() * 100 + '%';
+				heart.style.animationDuration = (Math.random() * 5 + 6) + 's';
+				heart.style.animationDelay = Math.random() * 8 + 's';
+				container.appendChild(heart);
+			}
+		}
+
+		// 点击爱心特效
+		let clickCount = 0;
+		let clickTimeout;
+
+		document.addEventListener('click', function(e) {
+			const heart = document.createElement('div');
+			heart.className = 'click-heart';
+			heart.innerHTML = '❤️';
+			heart.style.left = e.clientX + 'px';
+			heart.style.top = e.clientY + 'px';
+			document.body.appendChild(heart);
+
+			// 清理动画元素
+			setTimeout(() => {
+				heart.remove();
+			}, 1000);
+
+			// 连击检测
+			clickCount++;
+			clearTimeout(clickTimeout);
+			clickTimeout = setTimeout(() => {
+				if (clickCount >= 3) {
+					createHeartExplosion(e.clientX, e.clientY);
+				}
+				clickCount = 0;
+			}, 300);
+		});
+
+		// 爱心爆炸效果
+		function createHeartExplosion(x, y) {
+			const explosionCount = isMobile ? 8 : 15;
+
+			for (let i = 0; i < explosionCount; i++) {
+				const heart = document.createElement('div');
+				heart.className = 'heart-explosion';
+				heart.innerHTML = '❤️';
+				heart.style.left = x + 'px';
+				heart.style.top = y + 'px';
+
+				const angle = (i / explosionCount) * Math.PI * 2;
+				const distance = isMobile ? 80 : 120;
+				const tx = Math.cos(angle) * distance;
+				const ty = Math.sin(angle) * distance;
+
+				heart.style.setProperty('--tx', tx + 'px');
+				heart.style.setProperty('--ty', ty + 'px');
+
+				document.body.appendChild(heart);
+
+				setTimeout(() => {
+					heart.remove();
+				}, 800);
+			}
+		}
+
+		// 打字机效果
+		let index = 0;
+		const speed = 80; // 80ms/字
+
+		function typeWriter() {
+			const textElement = document.getElementById('text');
+			const cursor = document.getElementById('cursor');
+
+			if (index < text.length) {
+				textElement.innerHTML += text.charAt(index);
+				index++;
+				setTimeout(typeWriter, speed);
+			} else {
+				// 打字完成，隐藏光标，显示按钮
+				cursor.style.display = 'none';
+				const button = document.getElementById('heartButton');
+				button.style.display = 'block';
+				button.style.animation = 'heartbeat 1.5s ease-in-out infinite';
+			}
+
+			// 自动滚动到底部
+			const content = document.querySelector('.content');
+			autoScrollToBottom(content);
+		}
+
+		// 自动滚动到底部
 		function autoScrollToBottom(targetElement) {
-			const HEI = document.documentElement.clientHeight
+			const HEI = document.documentElement.clientHeight;
 			const isOverflow = targetElement.scrollHeight >= HEI - 50;
 			if (isOverflow) {
-				// 使用 requestAnimationFrame 优化滚动效果 
 				requestAnimationFrame(() => {
 					window.scroll(0, targetElement.scrollHeight - HEI + 50);
 				});
 			}
 		}
+
+		// 页面过渡动画 - 星尘效果
+		function createStardustEffect(callback) {
+			const overlay = document.getElementById('stardustOverlay');
+			overlay.style.display = 'block';
+
+			// 创建星尘粒子
+			const particleCount = isMobile ? 30 : 60;
+			const centerX = window.innerWidth / 2;
+			const centerY = window.innerHeight / 2;
+
+			for (let i = 0; i < particleCount; i++) {
+				const particle = document.createElement('div');
+				particle.className = 'stardust-particle';
+				particle.style.left = centerX + 'px';
+				particle.style.top = centerY + 'px';
+
+				const angle = (i / particleCount) * Math.PI * 2;
+				const distance = Math.random() * 300 + 200;
+				const tx = Math.cos(angle) * distance;
+				const ty = Math.sin(angle) * distance;
+
+				particle.style.setProperty('--tx', tx + 'px');
+				particle.style.setProperty('--ty', ty + 'px');
+				particle.style.animationDelay = Math.random() * 0.3 + 's';
+
+				overlay.appendChild(particle);
+			}
+
+			// 延迟后执行回调
+			setTimeout(() => {
+				callback();
+			}, 1200);
+		}
+
+		// 按钮点击事件
+		document.getElementById('heartButton').addEventListener('click', function() {
+			// 创建星尘效果并跳转
+			createStardustEffect(() => {
+				window.location.href = "./love";
+			});
+		});
+
+		// 初始化
+		window.addEventListener('load', function() {
+			createStars();
+			createSakura();
+			createHeartRain();
+			typeWriter();
+		});
 	</script>
 </body>
 
