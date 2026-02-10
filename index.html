@@ -35,9 +35,17 @@
 		}
 
 		@keyframes gradientShift {
-			0% { background-position: 0% 50%; }
-			50% { background-position: 100% 50%; }
-			100% { background-position: 0% 50%; }
+			0% {
+				background-position: 0% 50%;
+			}
+
+			50% {
+				background-position: 100% 50%;
+			}
+
+			100% {
+				background-position: 0% 50%;
+			}
 		}
 
 		/* 星星粒子效果 */
@@ -62,8 +70,17 @@
 		}
 
 		@keyframes twinkle {
-			0%, 100% { opacity: 0.3; transform: scale(1); }
-			50% { opacity: 1; transform: scale(1.5); }
+
+			0%,
+			100% {
+				opacity: 0.3;
+				transform: scale(1);
+			}
+
+			50% {
+				opacity: 1;
+				transform: scale(1.5);
+			}
 		}
 
 		/* 樱花飘落动画 */
@@ -92,12 +109,15 @@
 				transform: translateY(-100px) rotate(0deg) translateX(0);
 				opacity: 0;
 			}
+
 			10% {
 				opacity: 0.8;
 			}
+
 			90% {
 				opacity: 0.8;
 			}
+
 			100% {
 				transform: translateY(100vh) rotate(720deg) translateX(100px);
 				opacity: 0;
@@ -127,12 +147,15 @@
 				transform: translateY(-50px) rotate(0deg);
 				opacity: 0;
 			}
+
 			10% {
 				opacity: 0.6;
 			}
+
 			90% {
 				opacity: 0.6;
 			}
+
 			100% {
 				transform: translateY(100vh) rotate(360deg);
 				opacity: 0;
@@ -153,10 +176,12 @@
 				transform: translateY(0) scale(0);
 				opacity: 1;
 			}
+
 			50% {
 				transform: translateY(-50px) scale(1.5);
 				opacity: 0.8;
 			}
+
 			100% {
 				transform: translateY(-100px) scale(0.5);
 				opacity: 0;
@@ -177,6 +202,7 @@
 				transform: translate(0, 0) scale(0);
 				opacity: 1;
 			}
+
 			100% {
 				opacity: 0;
 			}
@@ -210,8 +236,15 @@
 		}
 
 		@keyframes titleGlow {
-			0%, 100% { text-shadow: 0 0 20px rgba(255, 107, 157, 0.8); }
-			50% { text-shadow: 0 0 40px rgba(255, 107, 157, 1), 0 0 60px rgba(255, 107, 157, 0.6); }
+
+			0%,
+			100% {
+				text-shadow: 0 0 20px rgba(255, 107, 157, 0.8);
+			}
+
+			50% {
+				text-shadow: 0 0 40px rgba(255, 107, 157, 1), 0 0 60px rgba(255, 107, 157, 0.6);
+			}
 		}
 
 		#text {
@@ -235,8 +268,15 @@
 		}
 
 		@keyframes cursorBlink {
-			0%, 100% { opacity: 1; }
-			50% { opacity: 0; }
+
+			0%,
+			100% {
+				opacity: 1;
+			}
+
+			50% {
+				opacity: 0;
+			}
 		}
 
 		/* 心跳按钮 */
@@ -269,8 +309,15 @@
 		}
 
 		@keyframes heartbeat {
-			0%, 100% { transform: translateX(-50%) scale(1); }
-			50% { transform: translateX(-50%) scale(1.05); }
+
+			0%,
+			100% {
+				transform: translateX(-50%) scale(1);
+			}
+
+			50% {
+				transform: translateX(-50%) scale(1.05);
+			}
 		}
 
 		/* 页面过渡动画 - 星尘效果 */
@@ -300,6 +347,7 @@
 				transform: translate(0, 0) scale(1);
 				opacity: 1;
 			}
+
 			100% {
 				transform: translate(var(--tx), var(--ty)) scale(0);
 				opacity: 0;
@@ -364,6 +412,22 @@
 			}
 		}
 	</style>
+	<style>
+		.lover {
+			position: fixed;
+			top: 30px;
+			right: 40px;
+			width: 160px;
+			border-radius: 50%;
+			z-index: 99;
+		}
+
+		@media screen and (max-width: 768px) {
+			.lover {
+				width: 100px;
+			}
+		}
+	</style>
 </head>
 
 <body>
@@ -390,6 +454,7 @@
 			<span class="cursor" id="cursor"></span>
 		</div>
 	</div>
+	<img class="lover" src="./love/img/jiao/01.jpg" alt="mm" srcset="">
 
 	<!-- 心跳按钮 -->
 	<button class="heart-button" id="heartButton" style="display: none;">查看更多 ❤️</button>
@@ -471,7 +536,7 @@
 		let clickCount = 0;
 		let clickTimeout;
 
-		document.addEventListener('click', function(e) {
+		document.addEventListener('click', function (e) {
 			const heart = document.createElement('div');
 			heart.className = 'click-heart';
 			heart.innerHTML = '❤️';
@@ -524,7 +589,7 @@
 
 		// 打字机效果
 		let index = 0;
-		const speed = 80; // 80ms/字
+		const speed = 200; // 200ms/字
 
 		function typeWriter() {
 			const textElement = document.getElementById('text');
@@ -593,7 +658,7 @@
 		}
 
 		// 按钮点击事件
-		document.getElementById('heartButton').addEventListener('click', function() {
+		document.getElementById('heartButton').addEventListener('click', function () {
 			// 创建星尘效果并跳转
 			createStardustEffect(() => {
 				window.location.href = "./love";
@@ -601,7 +666,7 @@
 		});
 
 		// 初始化
-		window.addEventListener('load', function() {
+		window.addEventListener('load', function () {
 			createStars();
 			createSakura();
 			createHeartRain();
