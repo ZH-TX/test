@@ -95,9 +95,24 @@
   var TIME_WINDOW = 10000;
   var autoPlayInterval = null;
   var autoPlayEnabled = sessionStorage.getItem(AUTOPLAY_KEY) === "true";
+  var currentPageIndex = null;
 
+  /**
+   * 记录翻页操作（仅在页面真正切换时）
+   * 避免屏幕缩放等非翻页操作触发弹窗
+   */
   function recordPageTurn() {
     if (autoPlayEnabled) return;
+
+    // 获取当前页面索引
+    var newPageIndex = getCurrentPageIndex();
+
+    // 如果页面没有变化，说明只是重渲染（如缩放），不记录
+    if (currentPageIndex === newPageIndex && currentPageIndex !== null) {
+      return;
+    }
+
+    currentPageIndex = newPageIndex;
 
     var now = Date.now();
     var times = JSON.parse(sessionStorage.getItem(PAGE_TIMES_KEY) || "[]");
@@ -111,6 +126,22 @@
     if (times.length >= THRESHOLD) {
       showAutoPlayPrompt();
     }
+  }
+
+  /**
+   * 获取当前激活页面的索引
+   */
+  function getCurrentPageIndex() {
+    var actualPage = document.querySelector(".ft-page.actual");
+    if (actualPage) {
+      var allPages = document.querySelectorAll(".ft-page");
+      for (var i = 0; i < allPages.length; i++) {
+        if (allPages[i] === actualPage) {
+          return i;
+        }
+      }
+    }
+    return null;
   }
 
   function showAutoPlayPrompt() {

@@ -171,6 +171,9 @@ body {
   -webkit-transition: -webkit-transform 0.5s cubic-bezier(0.77, 0.1, 0.22, 1);
   transition: transform 0.5s cubic-bezier(0.77, 0.1, 0.22, 1);
 }
+/* .ft-overview .flowtime{
+  height: 50%;
+} */
 .flowtime.no-transition {
   -o-transition: -o-transform 0s;
   -moz-transition: -moz-transform 0s;
@@ -1202,10 +1205,55 @@ button {
   background-color: #febebe;
 }
 .page-54 {
-  background: #d3d2d0 url(../img/319280_bg.jpg) repeat;
+  background: #d3d2d0 url(../img/jiao/01.jpg);
+  background-position: center;
+  background-size: 80%;
+}
+
+/* 手机端：人物图全屏展示 */
+@media screen and (max-width: 768px) {
+  .page-54 {
+    background-size: cover;
+  }
+}
+
+/* 电脑端：多重背景拼图效果 */
+@media screen and (min-width: 769px) {
+  .page-54 {
+    /* 多重背景：所有图片组合成拼图效果 */
+    background:
+      /* 右上角 */
+      url(../img/jiao/06.jpg) 85% 10% / 26% auto,
+      /* 右下角 */
+      url(../img/jiao/04.jpg) 85% 85% / 25% auto,
+      /* 左上角 */
+      url(../img/jiao/03.jpg) 10% 10% / 22% auto,
+      /* 左下角 */
+      url(../img/jiao/02.jpg) 10% 80% / 24% auto,
+      /* 中心主图 */
+      url(../img/jiao/01.jpg) center center / 40% auto;
+    background-repeat: no-repeat;
+    background-blend-mode: normal;
+  }
+  .page-54 .center-img {
+    position: relative;
+    z-index: 10;
+  }
+  /* 添加渐变遮罩层，让拼图更有层次感 */
+  .page-54::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, transparent 0%, rgba(211, 210, 208, 0.2) 60%, rgba(211, 210, 208, 0.6) 100%);
+    z-index: 1;
+    pointer-events: none;
+  }
 }
 .page-54 .center-img {
-  background-image: url(../img/319280.jpg);
+  /* background-image: url(../img/319280.jpg); */
   text-indent: -99999px;
   background-size: 80%;
 }
