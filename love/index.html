@@ -23,7 +23,6 @@
 		<div class="music-toggle" id="musicToggle" title="点击播放/暂停音乐">
 			<span id="musicIcon">🎵</span>
 		</div>
-
 		<div class="audioTips">
 			<audio id="music" controls src="music/123.mp3" preload type="audio/mp3" autoplay loop></audio>
 			<script>
@@ -363,7 +362,7 @@
 		// });
 
 		// 音乐图标点击控制
-		(function() {
+		(function () {
 			var music = document.getElementById('music');
 			var musicToggle = document.getElementById('musicToggle');
 			var musicIcon = document.getElementById('musicIcon');
@@ -385,7 +384,7 @@
 			function toggleMusic(e) {
 				if (e) e.stopPropagation();
 				if (music.paused) {
-					music.play().catch(function(err) {
+					music.play().catch((err) => {
 						console.log('播放失败:', err);
 					});
 				} else {
