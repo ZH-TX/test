@@ -411,6 +411,144 @@
 				font-size: 16px;
 			}
 		}
+
+		/* 密码锁样式 */
+		.password-lock-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #e94560 75%, #ff6b9d 100%);
+			background-size: 400% 400%;
+			animation: gradientShift 15s ease infinite;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 10000;
+			transition: opacity 0.5s ease, visibility 0.5s ease;
+		}
+
+		.password-lock-overlay.hidden {
+			opacity: 0;
+			visibility: hidden;
+			pointer-events: none;
+		}
+
+		.password-box {
+			background: rgba(255, 255, 255, 0.15);
+			backdrop-filter: blur(20px);
+			-webkit-backdrop-filter: blur(20px);
+			border: 1px solid rgba(255, 255, 255, 0.3);
+			border-radius: 20px;
+			padding: 40px 50px;
+			text-align: center;
+			box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+			max-width: 400px;
+			width: 90%;
+		}
+
+		.avatar-wrapper {
+			margin-bottom: 25px;
+			display: flex;
+			justify-content: center;
+		}
+
+		.avatar {
+			width: 120px;
+			height: 120px;
+			border-radius: 50%;
+			border: 4px solid rgba(255, 255, 255, 0.6);
+			box-shadow: 0 0 30px rgba(255, 107, 157, 0.5);
+			object-fit: cover;
+			animation: avatarFloat 3s ease-in-out infinite;
+		}
+
+		@keyframes avatarFloat {
+			0%, 100% { transform: translateY(0); }
+			50% { transform: translateY(-10px); }
+		}
+
+		.password-box h2 {
+			color: #fff;
+			font-size: 28px;
+			margin-bottom: 30px;
+			text-shadow: 0 0 20px rgba(255, 107, 157, 0.8);
+		}
+
+		.password-input-wrapper {
+			position: relative;
+			margin-bottom: 30px;
+		}
+
+		.password-input-wrapper input {
+			width: 100%;
+			padding: 15px 20px;
+			font-size: 18px;
+			background: rgba(255, 255, 255, 0.1);
+			border: 2px solid rgba(255, 255, 255, 0.3);
+			border-radius: 10px;
+			color: #fff;
+			text-align: center;
+			font-family: 'Ma Shan Zheng', cursive;
+			transition: all 0.3s ease;
+			outline: none;
+		}
+
+		.password-input-wrapper input::placeholder {
+			color: rgba(255, 255, 255, 0.6);
+		}
+
+		.password-input-wrapper input:focus {
+			border-color: #ff6b9d;
+			box-shadow: 0 0 20px rgba(255, 107, 157, 0.4);
+		}
+
+		.password-input-wrapper input.error {
+			border-color: #ff4757;
+			animation: shake 0.5s ease-in-out;
+		}
+
+		@keyframes shake {
+			0%, 100% { transform: translateX(0); }
+			10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+			20%, 40%, 60%, 80% { transform: translateX(10px); }
+		}
+
+		.password-submit-btn {
+			padding: 12px 50px;
+			background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 50%, #ffb3c6 100%);
+			border: none;
+			border-radius: 25px;
+			color: white;
+			font-size: 18px;
+			font-family: 'Ma Shan Zheng', cursive;
+			cursor: pointer;
+			box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+			transition: all 0.3s ease;
+		}
+
+		.password-submit-btn:hover {
+			transform: scale(1.1);
+			box-shadow: 0 6px 25px rgba(255, 107, 157, 0.6);
+		}
+
+		.password-submit-btn:active {
+			transform: scale(0.95);
+		}
+
+		.error-message {
+			color: #ff4757;
+			font-size: 16px;
+			margin-top: 15px;
+			min-height: 24px;
+			opacity: 0;
+			transition: opacity 0.3s ease;
+		}
+
+		.error-message.show {
+			opacity: 1;
+		}
 	</style>
 	<style>
 		.lover {
@@ -430,7 +568,22 @@
 	</style>
 </head>
 
-<body>
+ <body>
+	<!-- 密码锁覆盖层 -->
+	<div class="password-lock-overlay" id="passwordLock">
+		<div class="password-box">
+			<div class="avatar-wrapper">
+				<img src="./love/img/jiao/02.jpg" alt="头像" class="avatar">
+			</div>
+			<h2>输入密码解锁</h2>
+			<div class="password-input-wrapper">
+				<input type="password" id="passwordInput" placeholder="请输入密码" maxlength="7" autocomplete="off">
+			</div>
+			<button class="password-submit-btn" id="passwordSubmitBtn">解锁 ❤️</button>
+			<div class="error-message" id="errorMessage">密码错误，请重试</div>
+		</div>
+	</div>
+
 	<!-- 动态星空渐变背景 -->
 	<div class="background"></div>
 
@@ -460,6 +613,82 @@
 	<button class="heart-button" id="heartButton" style="display: none;">查看更多 ❤️</button>
 
 	<script>
+		// 密码锁功能
+		const CORRECT_PASSWORD = '5201314';
+		const PASSWORD_KEY = 'love_page_unlocked';
+
+		// 初始化密码锁
+		function initPasswordLock() {
+			const isUnlocked = sessionStorage.getItem(PASSWORD_KEY) === 'true';
+
+			if (isUnlocked) {
+				// 已解锁，隐藏密码锁
+				hidePasswordLock();
+				// 执行页面初始化
+				setTimeout(initPage, 300);
+			} else {
+				// 显示密码锁
+				setupPasswordHandlers();
+			}
+		}
+
+		// 设置密码输入处理
+		function setupPasswordHandlers() {
+			const passwordInput = document.getElementById('passwordInput');
+			const submitBtn = document.getElementById('passwordSubmitBtn');
+			const errorMessage = document.getElementById('errorMessage');
+
+			// 回车键提交
+			passwordInput.addEventListener('keypress', function(e) {
+				if (e.key === 'Enter') {
+					validatePassword(passwordInput, errorMessage);
+				}
+			});
+
+			// 按钮点击提交
+			submitBtn.addEventListener('click', function() {
+				validatePassword(passwordInput, errorMessage);
+			});
+
+			// 输入时清除错误状态
+			passwordInput.addEventListener('input', function() {
+				passwordInput.classList.remove('error');
+				errorMessage.classList.remove('show');
+			});
+		}
+
+		// 验证密码
+		function validatePassword(input, errorMsg) {
+			const password = input.value.trim();
+
+			if (password === CORRECT_PASSWORD) {
+				// 密码正确
+				sessionStorage.setItem(PASSWORD_KEY, 'true');
+				hidePasswordLock();
+				setTimeout(initPage, 300);
+			} else {
+				// 密码错误
+				input.classList.add('error');
+				errorMsg.classList.add('show');
+				input.value = '';
+				input.focus();
+			}
+		}
+
+		// 隐藏密码锁
+		function hidePasswordLock() {
+			const passwordLock = document.getElementById('passwordLock');
+			passwordLock.classList.add('hidden');
+		}
+
+		// 初始化页面
+		function initPage() {
+			createStars();
+			createSakura();
+			createHeartRain();
+			typeWriter();
+		}
+
 		// 文案内容
 		const text = `娇娇，很高兴认识你，
 虽然与你相处的时间不是很久,
@@ -667,10 +896,7 @@
 
 		// 初始化
 		window.addEventListener('load', function () {
-			createStars();
-			createSakura();
-			createHeartRain();
-			typeWriter();
+			initPasswordLock();
 		});
 	</script>
 </body>
