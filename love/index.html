@@ -19,31 +19,13 @@
 
 <body>
 	<div>
+		<!-- 音乐播放图标 -->
+		<div class="music-toggle" id="musicToggle" title="点击播放/暂停音乐">
+			<span id="musicIcon">🎵</span>
+		</div>
+
 		<div class="audioTips">
-			<audio id="music" src="music/123.mp3" preload loop></audio>
-			<script>
-				(function() {
-					var music = document.getElementById('music');
-					var events = ['click', 'touchstart', 'keydown', 'pointerdown'];
-					
-					function playMusic() {
-						music.play().catch(function() {});
-						events.forEach(function(e) {
-							document.removeEventListener(e, playMusic, true);
-						});
-					}
-					
-					events.forEach(function(e) {
-						document.addEventListener(e, playMusic, true);
-					});
-				})();
-			</script>
-			<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-			<script>
-				document.addEventListener('WeixinJSBridgeReady', function() {
-					document.getElementById('music').play();
-				});
-			</script>
+			<audio id="music" src="music/123.mp3" autoplay preload loop></audio>
 		</div>
 	</div>
 	<div class="flowtime">
@@ -359,6 +341,103 @@
 		// 	window.addEventListener('orientationchange', lazyLoad);
 		// 	lazyLoad();
 		// });
+
+		// 音乐播放控制
+		(function () {
+			var music = document.getElementById('music');
+			var musicToggle = document.getElementById('musicToggle');
+			var musicIcon = document.getElementById('musicIcon');
+			var isPlaying = false;
+
+			// 更新音乐图标状态
+			function updateMusicIcon() {
+				if (isPlaying) {
+					musicToggle.classList.add('playing');
+					musicToggle.classList.remove('paused');
+					musicIcon.textContent = '🎶';
+				} else {
+					musicToggle.classList.remove('playing');
+					musicToggle.classList.add('paused');
+					musicIcon.textContent = '🎵';
+				}
+			}
+
+			// 切换音乐播放状态
+			function toggleMusic() {
+				if (music.paused) {
+					music.play().then(function () {
+						isPlaying = true;
+						updateMusicIcon();
+					}).catch(function (err) {
+						console.log('播放失败:', err);
+					});
+				} else {
+					music.pause();
+					isPlaying = false;
+					updateMusicIcon();
+				}
+			}
+
+			// 点击图标切换音乐
+			musicToggle.addEventListener('click', function (e) {
+				e.stopPropagation();
+				toggleMusic();
+			});
+			musicToggle.addEventListener('touchstart', function (e) {
+				e.stopPropagation();
+				toggleMusic();
+			});
+
+			// 用户首次交互后自动播放
+			var attemptedPlay = false;
+			var userInteractionEvents = ['click', 'touchstart', 'keydown', 'pointerdown'];
+
+			function tryPlayOnInteraction() {
+				if (attemptedPlay) return;
+				attemptedPlay = true;
+
+				music.play().then(function () {
+					isPlaying = true;
+					updateMusicIcon();
+				}).catch(function (err) {
+					isPlaying = false;
+					updateMusicIcon();
+					console.log('首次播放被阻止，需要用户点击图标:', err);
+				});
+
+				userInteractionEvents.forEach(function (evt) {
+					document.removeEventListener(evt, tryPlayOnInteraction, true);
+				});
+			}
+
+			userInteractionEvents.forEach(function (evt) {
+				document.addEventListener(evt, tryPlayOnInteraction, true);
+			});
+
+			// 监听音乐事件
+			music.addEventListener('play', function () {
+				isPlaying = true;
+				updateMusicIcon();
+			});
+
+			music.addEventListener('pause', function () {
+				isPlaying = false;
+				updateMusicIcon();
+			});
+
+			// 微信浏览器兼容
+			if (typeof WeixinJSBridge !== 'undefined') {
+				WeixinJSBridge.invoke('getNetworkType', {}, function () {
+					tryPlayOnInteraction();
+				});
+			}
+			document.addEventListener('WeixinJSBridgeReady', function () {
+				tryPlayOnInteraction();
+			});
+
+			// 初始化图标状态
+			updateMusicIcon();
+		})();
 	</script>
 
 

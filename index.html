@@ -465,8 +465,15 @@
 		}
 
 		@keyframes avatarFloat {
-			0%, 100% { transform: translateY(0); }
-			50% { transform: translateY(-10px); }
+
+			0%,
+			100% {
+				transform: translateY(0);
+			}
+
+			50% {
+				transform: translateY(-10px);
+			}
 		}
 
 		.password-box h2 {
@@ -510,9 +517,26 @@
 		}
 
 		@keyframes shake {
-			0%, 100% { transform: translateX(0); }
-			10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
-			20%, 40%, 60%, 80% { transform: translateX(10px); }
+
+			0%,
+			100% {
+				transform: translateX(0);
+			}
+
+			10%,
+			30%,
+			50%,
+			70%,
+			90% {
+				transform: translateX(-10px);
+			}
+
+			20%,
+			40%,
+			60%,
+			80% {
+				transform: translateX(10px);
+			}
 		}
 
 		.password-submit-btn {
@@ -563,12 +587,13 @@
 		@media screen and (max-width: 768px) {
 			.lover {
 				width: 100px;
+				right: 18px;
 			}
 		}
 	</style>
 </head>
 
- <body>
+<body>
 	<!-- 密码锁覆盖层 -->
 	<div class="password-lock-overlay" id="passwordLock">
 		<div class="password-box">
@@ -639,19 +664,19 @@
 			const errorMessage = document.getElementById('errorMessage');
 
 			// 回车键提交
-			passwordInput.addEventListener('keypress', function(e) {
+			passwordInput.addEventListener('keypress', function (e) {
 				if (e.key === 'Enter') {
 					validatePassword(passwordInput, errorMessage);
 				}
 			});
 
 			// 按钮点击提交
-			submitBtn.addEventListener('click', function() {
+			submitBtn.addEventListener('click', function () {
 				validatePassword(passwordInput, errorMessage);
 			});
 
 			// 输入时清除错误状态
-			passwordInput.addEventListener('input', function() {
+			passwordInput.addEventListener('input', function () {
 				passwordInput.classList.remove('error');
 				errorMessage.classList.remove('show');
 			});
