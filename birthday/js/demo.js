@@ -1381,6 +1381,10 @@
 		if (p === 'wish') {
 			hintEl.classList.remove('on');
 			actionsEl.classList.remove('on');
+			// 进度条只在 cake 幕里更新，切幕后就没人管它了，
+			// 会一直亮着满格。这里收掉并归零。
+			meterEl.classList.remove('on');
+			updateMeter(0);
 			setTimeout(function () {
 				captionEl.textContent = '愿你所求皆如愿\n所行皆坦途';
 				captionEl.classList.add('on');
