@@ -105,8 +105,8 @@
 
 /* ---------------- para：信纸感长段落 ---------------- */
 .letter {
-	width: min(620px, 90vw);
-	max-height: 56vh;
+	width: min(680px, 92vw);
+	height: calc(100vh - 150px);
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 	padding: 26px 24px 30px;

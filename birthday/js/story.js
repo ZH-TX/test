@@ -78,7 +78,6 @@
     {
       kind: "para",
       hold: 2600,
-      cps: 30,
       sign: "—— 那个不太会说话的人",
       // ↓↓↓ 这封信是草稿，按你自己的话说就行，长短随意
       text:
@@ -134,6 +133,10 @@
      想让人必须点：把 SPEED 调到 8 以上就够久了。 */
 
   var SPEED = 1.8;
+
+  // ★ 长信打字速度：每秒打几个字。越小越慢，调这一个数就行。
+  //   8 = 很慢很慢（像真的在手写）；14 = 偏慢；22 = 正常；35 = 赶时间
+  var LETTER_CPS = 14;
 
   var TAP_HINT_DELAY = 900; // 超过这么久没点，才浮出「轻触继续」提示
   var MIN_SETTLE = 550; // 进场动画至少播这么久才接受点击，防止误触连跳
@@ -457,7 +460,7 @@
     var node = sc.el.querySelector(".s-para");
     var card = sc.el.querySelector(".letter");
     var text = sc.text || "";
-    var cps = sc.cps || 32; // 每秒打几个字
+    var cps = sc.cps || LETTER_CPS; // 单幕可以覆盖全局速度
     node.textContent = "";
     node.classList.add("typing");
 
