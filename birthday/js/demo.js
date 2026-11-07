@@ -309,20 +309,25 @@
 	];
 
 	// 奶油花边：每层奶油顶沿一圈小球
+	// 奶油裱花：沿每层奶油顶沿挂一圈小球，球心在边沿下方并略微外探，
+	// 看起来是挤出来挂在边上，而不是趴在顶面上一串珠子。
 	var drips = [];
 	(function buildDrips() {
 		for (var li = 0; li < LAYERS.length; li++) {
 			var L = LAYERS[li];
 			if (L.kind !== 'cream') continue;
-			var n = Math.round(L.r / 4.2);
+			var rad = L.r * 0.088;
+			var n = Math.max(10, Math.round(Math.PI * L.r / rad));
+			var ring = L.r - rad * 0.25;
 			for (var i = 0; i < n; i++) {
-				var a = i / n * TAU;
+				var a = (i + 0.5) / n * TAU;
 				drips.push({
-					x: Math.cos(a) * L.r,
-					y: L.y1,
-					z: Math.sin(a) * L.r,
-					rad: L.r * 0.055,
-					col: C.creamTop
+					x: Math.cos(a) * ring,
+					y: L.y1 - rad * 0.58,
+					z: Math.sin(a) * ring,
+					rad: rad,
+					nx: Math.cos(a),
+					nz: Math.sin(a)
 				});
 			}
 		}
@@ -670,16 +675,29 @@
 			}
 		}
 
-		// 奶油球（花边）
+		// 奶油裱花球
 		for (var di = 0; di < drips.length; di++) {
 			var D = drips[di];
+			var rnx = D.nx * cosY - D.nz * sinY;
+			var rnz = D.nx * sinY + D.nz * cosY;
+			if (rnz > 0.28) continue;                 // 背面的不画
+
 			var dp = project(D.x, D.y + yOff, D.z);
-			var dnx = D.x / Math.max(1, Math.hypot(D.x, D.z));
-			var dnz = D.z / Math.max(1, Math.hypot(D.x, D.z));
-			var dnx2 = dnx * cosY - dnz * sinY;
-			var dnz2 = dnx * sinY + dnz * cosY;
-			var dlit = 0.65 + 0.5 * Math.max(0, dnx2 * LX + dnz2 * LZ);
-			faces.push({ z: dp.z - 0.6, pts: null, circle: { x: dp.x, y: dp.y, r: D.rad * dp.s }, col: shade(D.col, dlit) });
+			var rr = D.rad * dp.s;
+			if (rr < 0.8) continue;
+
+			// 球的朝向：径向水平 + 一点向上（我们从上方看，看到的是上半球）
+			var nl = Math.sqrt(rnx * rnx + 0.25 + rnz * rnz) || 1;
+			var nX = rnx / nl, nY = 0.5 / nl, nZ = rnz / nl;
+
+			faces.push({
+				z: dp.z - 0.7,
+				ball: {
+					x: dp.x, y: dp.y, r: rr,
+					hx: dp.x - rr * 0.30, hy: dp.y - rr * 0.34, hr: rr * 0.30
+				},
+				col: lightFace(C.cream, D.x, D.y, D.z, nX, nY, nZ, { spec: 0.5, shin: 16 })
+			});
 		}
 
 		// 樱桃
@@ -741,7 +759,16 @@
 
 		for (var i = 0; i < faces.length; i++) {
 			var f = faces[i];
-			if (f.seg) {
+			if (f.ball) {
+				ctx.fillStyle = f.col;
+				ctx.beginPath();
+				ctx.arc(f.ball.x, f.ball.y, f.ball.r, 0, TAU);
+				ctx.fill();
+				ctx.fillStyle = 'rgba(255,255,255,0.52)';
+				ctx.beginPath();
+				ctx.arc(f.ball.hx, f.ball.hy, f.ball.hr, 0, TAU);
+				ctx.fill();
+			} else if (f.seg) {
 				ctx.strokeStyle = f.col;
 				ctx.lineWidth = f.seg.w;
 				ctx.beginPath();
