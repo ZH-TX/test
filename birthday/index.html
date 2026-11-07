@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+	<meta name="theme-color" content="#05040e">
+	<link rel="icon" href="data:,">
+	<title>生日快乐 🎂</title>
+	<link rel="stylesheet" href="css/demo.css">
+	<link rel="stylesheet" href="css/story.css">
+</head>
+
+<body>
+	<!-- 第三幕的底：星尘 / 蛋糕 / 烟花都画在这张 canvas 上 -->
+	<canvas id="stage"></canvas>
+
+	<!-- ============ 第 0 幕：轻触开启 ============ -->
+	<div class="splash" id="splash">
+		<div class="splash-inner">
+			<div class="seal">
+				<span class="seal-heart">❤</span>
+			</div>
+			<p class="splash-hint">娇娇亲启</p>
+		</div>
+	</div>
+
+	<!-- ============ 叙事九幕 ============ -->
+	<!-- 叙事幕：内容是空的，全部由 js/story.js 里的 SCENES 数组生成。
+	     要加内容去改那个数组，不要在这里写。 -->
+	<div class="story" id="story"></div>
+
+	<!-- 手动推进时的呼吸提示，由 js/story.js 控制显隐 -->
+	<p class="tap-hint" id="tapHint">轻触继续</p>
+
+	<!-- ============ 第三幕：互动控件 ============ -->
+	<div class="ui">
+		<div class="meter" id="meter"><i id="meterFill"></i></div>
+		<p class="hint" id="hint"></p>
+		<div class="actions" id="actions">
+			<button id="micBtn" type="button">🎤 对着麦克风吹</button>
+			<button id="holdBtn" type="button">👆 按住吹</button>
+		</div>
+	</div>
+
+	<p class="caption" id="caption"></p>
+	<button class="again" id="againBtn" type="button">再看一次</button>
+	<button class="bgm" id="bgmBtn" type="button" title="背景音乐">♪</button>
+	<!-- 跳过按钮：按要求先注释掉 -->
+	<!-- <button class="skip" id="skipBtn" type="button" title="跳过叙事">跳过 ›</button> -->
+
+	<script src="js/story.js"></script>
+	<script src="js/demo.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,462 @@
+/* ============================================================================
+   叙事九幕
+   所有进出都带一点 3D 透视（rotationX / skewX），不是干巴巴的淡入淡出。
+   延迟统一走 --d 变量，方便在 JS 里按索引算 stagger。
+   ========================================================================== */
+
+.story {
+	position: fixed;
+	inset: 0;
+	z-index: 50;
+	pointer-events: none;
+}
+
+.scene {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 0 26px;
+	opacity: 0;
+	visibility: hidden;
+	transform: perspective(900px) translateZ(0);
+	transition: opacity 0.85s ease, transform 0.85s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.85s;
+	will-change: opacity, transform;
+}
+
+.scene.in {
+	opacity: 1;
+	visibility: visible;
+}
+
+/* 退场统一往上飘走 */
+.scene.out {
+	opacity: 0;
+	visibility: hidden;
+	transform: perspective(900px) translateY(-26px) rotateX(6deg) skewX(6deg);
+}
+
+/* ---------------- 1 问候 ---------------- */
+.s-greet {
+	display: flex;
+	gap: 0.32em;
+	flex-wrap: wrap;
+	justify-content: center;
+	font-size: clamp(38px, 11vw, 76px);
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	color: #fff;
+	text-shadow: 0 0 40px rgba(255, 107, 157, 0.55);
+	margin-bottom: 22px;
+}
+
+.s-word {
+	display: inline-block;
+	opacity: 0;
+	transform: translateY(-34px) rotateX(55deg) skewX(18deg);
+}
+
+.scene.in .s-word {
+	animation: wordDrop 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation-delay: var(--d, 0s);
+}
+
+@keyframes wordDrop {
+	to { opacity: 1; transform: translateY(0) rotateX(0) skewX(0); }
+}
+
+.s-sub {
+	font-size: clamp(15px, 4vw, 20px);
+	letter-spacing: 0.18em;
+	color: rgba(255, 238, 243, 0.78);
+	opacity: 0;
+	transform: translateY(14px);
+}
+
+.scene.in .s-sub {
+	animation: subUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.7s forwards;
+}
+
+@keyframes subUp {
+	to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------- 2 / 7 大字 ---------------- */
+.s-big {
+	font-size: clamp(28px, 8.4vw, 60px);
+	font-weight: 700;
+	letter-spacing: 0.10em;
+	color: #fff;
+	text-align: center;
+	text-shadow: 0 0 48px rgba(255, 107, 157, 0.75);
+	opacity: 0;
+	transform: scale(0.72) rotateX(28deg);
+}
+
+.scene.in .s-big {
+	animation: bigIn 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes bigIn {
+	to { opacity: 1; transform: scale(1) rotateX(0); }
+}
+
+/* ---------------- para：信纸感长段落 ---------------- */
+.s-para {
+	max-width: 30em;
+	margin: 0 auto;
+	font-size: clamp(15px, 4.4vw, 21px);
+	line-height: 2.05;
+	letter-spacing: 0.04em;
+	text-align: center;
+	white-space: pre-line;
+	color: rgba(255, 244, 248, 0.9);
+	text-shadow: 0 0 30px rgba(255, 107, 157, 0.30);
+	opacity: 0;
+	transform: translateY(20px) skewX(8deg);
+}
+
+.scene.in .s-para {
+	animation: paraIn 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes paraIn {
+	to { opacity: 1; transform: translateY(0) skewX(0); }
+}
+
+/* ---------------- 3 假聊天框 ---------------- */
+.fakebox {
+	width: min(520px, 88vw);
+	border-radius: 16px;
+	background: rgba(255, 255, 255, 0.055);
+	border: 1px solid rgba(255, 255, 255, 0.13);
+	-webkit-backdrop-filter: blur(16px);
+	backdrop-filter: blur(16px);
+	padding: 20px 20px 14px;
+	opacity: 0;
+	transform: translateY(26px) scale(0.94);
+	box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+}
+
+.scene.in .fakebox {
+	animation: boxIn 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes boxIn {
+	to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.fakebox-text {
+	min-height: 5.2em;
+	font-size: 15.5px;
+	line-height: 1.85;
+	color: #f0eaee;
+	letter-spacing: 0.02em;
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.fakebox-text span {
+	opacity: 0;
+	display: inline;
+}
+
+.fakebox-text span.on {
+	opacity: 1;
+}
+
+.fake-btn {
+	margin-top: 12px;
+	margin-left: auto;
+	width: fit-content;
+	padding: 7px 20px;
+	border-radius: 8px;
+	background: linear-gradient(135deg, #ff6b9d, #ff3d7f);
+	color: #fff;
+	font-size: 13px;
+	letter-spacing: 0.16em;
+	text-indent: 0.16em;
+	opacity: 0;
+	transform: scale(0.9);
+}
+
+.scene.in .fake-btn {
+	animation: btnIn 0.4s ease forwards;
+	animation-delay: var(--d, 1.2s);
+}
+
+.fake-btn.tapped {
+	animation: btnTap 0.3s ease forwards;
+}
+
+@keyframes btnIn {
+	to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes btnTap {
+	0% { transform: scale(1); }
+	45% { transform: scale(0.88); box-shadow: 0 0 0 10px rgba(255, 61, 127, 0.18); }
+	100% { transform: scale(1); }
+}
+
+/* ---------------- 4 / 8 逐句轮播 ---------------- */
+.idea {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 30px;
+	text-align: center;
+	font-size: clamp(20px, 5.6vw, 38px);
+	line-height: 1.7;
+	letter-spacing: 0.06em;
+	color: #fff5f8;
+	text-shadow: 0 0 34px rgba(255, 107, 157, 0.45);
+	opacity: 0;
+	transform: translateY(-22px) rotateX(12deg) skewX(14deg);
+	transition: opacity 0.62s ease, transform 0.62s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.idea.show {
+	opacity: 1;
+	transform: translateY(0) rotateX(0) skewX(0);
+}
+
+.idea.leave {
+	opacity: 0;
+	transform: translateY(22px) rotateY(8deg) skewX(-14deg);
+}
+
+.idea strong {
+	font-weight: 700;
+	color: #ff8fb4;
+	text-shadow: 0 0 30px rgba(255, 61, 127, 0.85);
+}
+
+.idea .smile {
+	display: inline-block;
+	margin-left: 0.14em;
+	color: #ffd76b;
+}
+
+/* ---------------- 5 所以 ---------------- */
+.s-so {
+	display: flex;
+	gap: 0.06em;
+	font-size: clamp(72px, 26vw, 190px);
+	font-weight: 900;
+	line-height: 1;
+	color: #fff;
+	text-shadow: 0 0 60px rgba(255, 107, 157, 0.7), 0 0 120px rgba(255, 61, 127, 0.35);
+}
+
+.so-char {
+	display: inline-block;
+	opacity: 0;
+	transform: scale(2.4) rotateZ(-12deg);
+}
+
+.scene.in .so-char {
+	animation: soSlam 0.62s cubic-bezier(0.2, 1.4, 0.4, 1) forwards;
+	animation-delay: var(--d, 0s);
+}
+
+@keyframes soSlam {
+	to { opacity: 1; transform: scale(1) rotateZ(0); }
+}
+
+/* ---------------- 6 照片 + 帽子 ---------------- */
+.photo-wrap {
+	position: relative;
+	width: clamp(150px, 42vw, 210px);
+	height: clamp(150px, 42vw, 210px);
+	border-radius: 50%;
+	overflow: visible;
+	margin-bottom: 26px;
+	opacity: 0;
+	transform: scale(3.4) rotate(-42deg);
+}
+
+.scene.in .photo-wrap {
+	animation: photoSlam 0.72s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes photoSlam {
+	to { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+.photo {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 50%;
+	border: 2px solid rgba(255, 255, 255, 0.22);
+	box-shadow: 0 18px 60px rgba(255, 61, 127, 0.30);
+	display: block;
+}
+
+/* 生日帽：锥体用 clip-path，绒球单独挂在顶点 */
+.hat {
+	position: absolute;
+	left: 4%;
+	top: -30%;
+	width: 46%;
+	height: 58%;
+	background: repeating-linear-gradient(128deg, #ff6b9d 0 9px, #ffd76b 9px 18px, #7ee0c8 18px 27px);
+	clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+	opacity: 0;
+	transform: translate(-90px, 220px) rotate(-160deg);
+	transform-origin: 50% 100%;
+}
+
+.scene.in .hat {
+	animation: hatFly 0.72s cubic-bezier(0.22, 1, 0.4, 1) 0.35s forwards;
+}
+
+@keyframes hatFly {
+	to { opacity: 1; transform: translate(0, 0) rotate(-16deg); }
+}
+
+.photo-wrap::before {
+	content: '';
+	position: absolute;
+	left: 4%;
+	top: -30%;
+	width: 46%;
+	height: 58%;
+	background: radial-gradient(circle at 50% 6%, #fff6c8 0 22%, rgba(255, 246, 200, 0) 23%);
+	pointer-events: none;
+	opacity: 0;
+	transform: translate(-90px, 220px) rotate(-160deg);
+	transform-origin: 50% 100%;
+}
+
+.scene.in .photo-wrap::before {
+	animation: hatFly 0.72s cubic-bezier(0.22, 1, 0.4, 1) 0.35s forwards;
+}
+
+.wish-hbd {
+	font-size: clamp(26px, 8vw, 52px);
+	font-weight: 800;
+	letter-spacing: 0.10em;
+	color: #fff;
+	text-shadow: 0 0 44px rgba(255, 107, 157, 0.8);
+	margin-bottom: 14px;
+}
+
+.wish-hbd .ch {
+	display: inline-block;
+	opacity: 0;
+	transform: translateY(-40px) rotate(140deg) skewX(28deg);
+}
+
+.scene.in .wish-hbd .ch {
+	animation: chBounce 0.8s cubic-bezier(0.18, 1.7, 0.42, 1) forwards;
+	animation-delay: var(--d, 0s);
+}
+
+@keyframes chBounce {
+	to { opacity: 1; transform: translateY(0) rotate(0) skewX(0); }
+}
+
+.wish-sub {
+	font-size: clamp(13px, 3.6vw, 16px);
+	letter-spacing: 0.14em;
+	color: rgba(255, 236, 242, 0.7);
+	opacity: 0;
+	transform: translateY(10px) skewX(-12deg);
+}
+
+.scene.in .wish-sub {
+	animation: subUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.95s forwards;
+}
+
+/* ---------------- 跳过按钮 ---------------- */
+.skip {
+	position: fixed;
+	right: 20px;
+	bottom: calc(22px + env(safe-area-inset-bottom));
+	appearance: none;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 999px;
+	background: rgba(0, 0, 0, 0.28);
+	-webkit-backdrop-filter: blur(10px);
+	backdrop-filter: blur(10px);
+	color: rgba(255, 240, 244, 0.62);
+	font-family: inherit;
+	font-size: 12px;
+	letter-spacing: 0.12em;
+	padding: 9px 17px;
+	cursor: pointer;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.5s ease, background 0.2s ease;
+	z-index: 70;
+}
+
+.skip.on {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.skip:hover {
+	background: rgba(0, 0, 0, 0.5);
+	color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.scene,
+	.idea,
+	.s-word,
+	.so-char,
+	.wish-hbd .ch {
+		transition-duration: 0.25s;
+		animation-duration: 0.25s !important;
+	}
+}
+
+/* ---------------- 手动推进提示 ---------------- */
+.tap-hint {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: calc(34px + env(safe-area-inset-bottom));
+	margin: 0;
+	text-align: center;
+	font-size: 12px;
+	letter-spacing: 0.44em;
+	text-indent: 0.44em;
+	color: rgba(255, 240, 244, 0.52);
+	text-shadow: 0 0 20px rgba(255, 107, 157, 0.5);
+	opacity: 0;
+	transform: translateY(6px);
+	transition: opacity 0.5s ease, transform 0.5s ease;
+	pointer-events: none;
+	z-index: 55;
+}
+
+.tap-hint.on {
+	opacity: 1;
+	transform: translateY(0);
+	animation: tapBreath 2.1s ease-in-out infinite;
+}
+
+.tap-hint.on::after {
+	content: '›';
+	display: inline-block;
+	margin-left: 0.2em;
+	animation: tapArrow 2.1s ease-in-out infinite;
+}
+
+@keyframes tapBreath {
+	0%, 100% { opacity: 0.35; }
+	50% { opacity: 0.95; }
+}
+
+@keyframes tapArrow {
+	0%, 100% { transform: translateX(0); }
+	50% { transform: translateX(4px); }
+}
