@@ -309,27 +309,30 @@
 	];
 
 	// 奶油花边：每层奶油顶沿一圈小球
-	// 奶油裱花：沿每层奶油顶沿挂一圈小球，球心在边沿下方并略微外探，
-	// 看起来是挤出来挂在边上，而不是趴在顶面上一串珠子。
-	var drips = [];
-	(function buildDrips() {
+	// 奶油裱花球开关。
+	// 打开会在每层奶油顶沿加一圈挤出来的奶油球（buttercream border）。
+	// 默认关：「挂一圈球」这个形态在缩小的画面上容易读成碎边/马赛克，
+	// 现在退回一条干净的奶油带。想要就设成 true，其它都不用动。
+	var SHOW_CREAM_BALLS = false;
+
+	// 奶油裱花：每层奶油顶沿挤一圈球。
+	// 关键：整圈作为一个整体来画（见 projectLayers），不是一个个圆堆上去 ——
+	// 逐个画会互相压边、深度排序每帧抖动，边缘碎成马赛克。
+	var creamRings = [];
+	(function buildRings() {
+		if (!SHOW_CREAM_BALLS) return;
 		for (var li = 0; li < LAYERS.length; li++) {
 			var L = LAYERS[li];
 			if (L.kind !== 'cream') continue;
-			var rad = L.r * 0.088;
+			var rad = L.r * 0.082;
 			var n = Math.max(10, Math.round(Math.PI * L.r / rad));
-			var ring = L.r - rad * 0.25;
+			var ringR = L.r - rad * 0.22;
+			var pts = [];
 			for (var i = 0; i < n; i++) {
 				var a = (i + 0.5) / n * TAU;
-				drips.push({
-					x: Math.cos(a) * ring,
-					y: L.y1 - rad * 0.58,
-					z: Math.sin(a) * ring,
-					rad: rad,
-					nx: Math.cos(a),
-					nz: Math.sin(a)
-				});
+				pts.push({ a: a, x: Math.cos(a) * ringR, z: Math.sin(a) * ringR });
 			}
+			creamRings.push({ L: L, rad: rad, pts: pts, y: L.y1 - rad * 0.52 });
 		}
 	})();
 
@@ -675,39 +678,49 @@
 			}
 		}
 
-		// 奶油裱花球
-		for (var di = 0; di < drips.length; di++) {
-			var D = drips[di];
-			var rnx = D.nx * cosY - D.nz * sinY;
-			var rnz = D.nx * sinY + D.nz * cosY;
-			if (rnz > 0.28) continue;                 // 背面的不画
+		// 奶油裱花：一圈合成一条路径，一次填充
+		for (var ri = 0; ri < creamRings.length; ri++) {
+			var R = creamRings[ri];
+			var yv = R.y + yOff;
+			var balls = [];
+			var frontZ = 1e9;
 
-			var dp = project(D.x, D.y + yOff, D.z);
-			var rr = D.rad * dp.s;
-			if (rr < 0.8) continue;
+			for (var rk = 0; rk < R.pts.length; rk++) {
+				var P = R.pts[rk];
+				var ca2 = Math.cos(P.a), sa2 = Math.sin(P.a);
+				var rnx = ca2 * cosY - sa2 * sinY;
+				var rnz = ca2 * sinY + sa2 * cosY;
+				if (rnz > 0.30) continue;               // 背面的不参与
 
-			// 球的朝向：径向水平 + 一点向上（我们从上方看，看到的是上半球）
-			var nl = Math.sqrt(rnx * rnx + 0.25 + rnz * rnz) || 1;
-			var nX = rnx / nl, nY = 0.5 / nl, nZ = rnz / nl;
+				var pp = project(P.x, yv, P.z);
+				balls.push({ x: pp.x, y: pp.y, r: R.rad * pp.s });
+				if (pp.z < frontZ) frontZ = pp.z;
+			}
+			if (balls.length < 4) continue;
+
+			// 整圈统一用一个投影半径，避免相邻球大小不一产生锯齿
+			var rr = 0;
+			for (var bi = 0; bi < balls.length; bi++) rr += balls[bi].r;
+			rr /= balls.length;
+
+			var leftX = balls[0].x, rightX = balls[0].x;
+			var leftI = 0, rightI = 0;
+			for (var bj = 1; bj < balls.length; bj++) {
+				if (balls[bj].x < leftX) { leftX = balls[bj].x; leftI = bj; }
+				if (balls[bj].x > rightX) { rightX = balls[bj].x; rightI = bj; }
+			}
+
+			// 三段取样算渐变：左端 / 中间 / 右端
+			var midI = balls.length >> 1;
+			var cL = lightFace(C.cream, 0, R.L.y1, 0, -0.92, 0.28, -0.28, { spec: 0.22, shin: 14 });
+			var cM = lightFace(C.cream, 0, R.L.y1, 0, 0.10, 0.36, -0.93, { spec: 0.55, shin: 16 });
+			var cR = lightFace(C.cream, 0, R.L.y1, 0, 0.92, 0.28, -0.28, { spec: 0.16, shin: 14 });
 
 			faces.push({
-				z: dp.z - 0.7,
-				ball: {
-					x: dp.x, y: dp.y, r: rr,
-					hx: dp.x - rr * 0.30, hy: dp.y - rr * 0.34, hr: rr * 0.30
-				},
-				col: lightFace(C.cream, D.x, D.y, D.z, nX, nY, nZ, { spec: 0.5, shin: 16 })
+				z: frontZ - 1.2,
+				ring: { balls: balls, r: rr, left: leftX, right: rightX },
+				ringCols: [cL, cM, cR]
 			});
-		}
-
-		// 樱桃
-		for (var hi = 0; hi < cherries.length; hi++) {
-			var Hc = cherries[hi];
-			var hp = project(Hc.x, Hc.y + yOff, Hc.z);
-			var hg = ctx.createRadialGradient(hp.x - hp.s * 3, hp.y - hp.s * 3, 0, hp.x, hp.y, Hc.rad * hp.s);
-			hg.addColorStop(0, '#ff7a90');
-			hg.addColorStop(1, '#b81f3d');
-			faces.push({ z: hp.z - 0.9, pts: null, circle: { x: hp.x, y: hp.y, r: Hc.rad * hp.s }, grad: hg, col: '#b81f3d' });
 		}
 
 		// 糖粒：沿侧面切向画一小段圆头线
@@ -759,7 +772,21 @@
 
 		for (var i = 0; i < faces.length; i++) {
 			var f = faces[i];
-			if (f.ball) {
+			if (f.ring) {
+				var g = f.ring;
+				var lg = ctx.createLinearGradient(g.left, 0, g.right, 0);
+				lg.addColorStop(0, f.ringCols[0]);
+				lg.addColorStop(0.5, f.ringCols[1]);
+				lg.addColorStop(1, f.ringCols[2]);
+				ctx.fillStyle = lg;
+				ctx.beginPath();
+				for (var bq = 0; bq < g.balls.length; bq++) {
+					var bl = g.balls[bq];
+					ctx.moveTo(bl.x + g.r, bl.y);
+					ctx.arc(bl.x, bl.y, g.r, 0, TAU);
+				}
+				ctx.fill();
+			} else if (f.ball) {
 				ctx.fillStyle = f.col;
 				ctx.beginPath();
 				ctx.arc(f.ball.x, f.ball.y, f.ball.r, 0, TAU);
