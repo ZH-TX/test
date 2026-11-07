@@ -328,6 +328,29 @@
 		}
 	})();
 
+	// 糖粒：撒在三层蛋糕侧面
+	var sprinkles = [];
+	(function buildSprinkles() {
+		var cols = ['#ffffff', '#ffe27a', '#ff9ec0', '#8ee6d0', '#c9a6ff'];
+		var tiers = [
+			{ r: 122, y0: -6, y1: 70, n: 15 },
+			{ r: 98, y0: 84, y1: 148, n: 12 },
+			{ r: 76, y0: 160, y1: 212, n: 9 }
+		];
+		for (var t = 0; t < tiers.length; t++) {
+			var tr = tiers[t];
+			for (var i = 0; i < tr.n; i++) {
+				sprinkles.push({
+					a: Math.random() * TAU,
+					y: tr.y0 + 9 + Math.random() * (tr.y1 - tr.y0 - 18),
+					r: tr.r + 0.6,
+					col: cols[(Math.random() * cols.length) | 0],
+					len: 3.2 + Math.random() * 2.6
+				});
+			}
+		}
+	})();
+
 	// 顶层樱桃
 	var cherries = [];
 	(function buildCherries() {
@@ -337,15 +360,74 @@
 		}
 	})();
 
-	// 色相 → 亮度系数，做统一光照
+	// ---- 光照 --------------------------------------------------------------
+	// 主光从左上前方来；三根蜡烛各算一盏暖色点光，会真的把蛋糕照亮。
+	var KEY = (function () {
+		var x = -0.46, y = 0.54, z = -0.70;
+		var l = Math.sqrt(x * x + y * y + z * z);
+		return { x: x / l, y: y / l, z: z / l };
+	})();
+	// 半程向量（主光 + 视线 (0,0,-1)），算高光用
+	var HALF = (function () {
+		var x = KEY.x, y = KEY.y, z = KEY.z - 1;
+		var l = Math.sqrt(x * x + y * y + z * z) || 1;
+		return { x: x / l, y: y / l, z: z / l };
+	})();
+
+	function clamp255(v) { return v < 0 ? 0 : (v > 255 ? 255 : Math.round(v)); }
+
+	function rgbOf(hex) {
+		return [
+			parseInt(hex.substr(1, 2), 16),
+			parseInt(hex.substr(3, 2), 16),
+			parseInt(hex.substr(5, 2), 16)
+		];
+	}
+
+	// 简单的线性明暗，留给蜡烛 / 奶油球 / 樱桃这些小件
 	function shade(hex, k) {
-		var r = parseInt(hex.substr(1, 2), 16);
-		var g = parseInt(hex.substr(3, 2), 16);
-		var b = parseInt(hex.substr(5, 2), 16);
-		r = Math.max(0, Math.min(255, Math.round(r * k)));
-		g = Math.max(0, Math.min(255, Math.round(g * k)));
-		b = Math.max(0, Math.min(255, Math.round(b * k)));
-		return 'rgb(' + r + ',' + g + ',' + b + ')';
+		var c = rgbOf(hex);
+		return 'rgb(' + clamp255(c[0] * k) + ',' + clamp255(c[1] * k) + ',' + clamp255(c[2] * k) + ')';
+	}
+
+	// 完整着色：主光漫反射 + 三盏烛光 + 高光 + 压暗系数
+	function lightFace(hex, px, py, pz, nx, ny, nz, opt) {
+		opt = opt || {};
+		var c = rgbOf(hex);
+
+		var lam = nx * KEY.x + ny * KEY.y + nz * KEY.z;
+		if (lam < 0) lam = 0;
+		var k = 0.40 + 0.58 * lam;   // 上限 0.98，不发白；发白只留给高光和烛光
+
+		// 烛光：逐盏算 距离衰减 × 法线朝向
+		var warm = 0;
+		for (var i = 0; i < candles.length; i++) {
+			var cd = candles[i];
+			if (cd.alive <= 0.01) continue;
+			var lx = Math.cos(cd.a) * CANDLE_R - px;
+			var ly = CANDLE_Y1 - py;
+			var lz = Math.sin(cd.a) * CANDLE_R - pz;
+			var d2 = lx * lx + ly * ly + lz * lz;
+			var d = Math.sqrt(d2) || 1;
+			var ndl = (nx * lx + ny * ly + nz * lz) / d;
+			if (ndl <= 0) continue;
+			warm += ndl * cd.alive / (1 + d2 / 13000);
+		}
+
+		// 高光
+		var sp = 0;
+		if (opt.spec) {
+			var sd = nx * HALF.x + ny * HALF.y + nz * HALF.z;
+			if (sd > 0) sp = Math.pow(sd, opt.shin || 20) * opt.spec;
+		}
+
+		var dim = opt.dim == null ? 1 : opt.dim;
+
+		var r = (c[0] * k + 152 * warm) * dim + 255 * sp;
+		var g = (c[1] * k + 98 * warm) * dim + 248 * sp;
+		var b = (c[2] * k + 46 * warm) * dim + 232 * sp;
+
+		return 'rgb(' + clamp255(r) + ',' + clamp255(g) + ',' + clamp255(b) + ')';
 	}
 
 	/* ---------------------------------------------------------------------
@@ -491,7 +573,7 @@
 
 	function projectLayers() {
 		var faces = [];
-		var SEG = isMobile ? 26 : 40;
+		var SEG = isMobile ? 32 : 52;
 		var yOff = -110 * (1 - easeOutCubic(cakeRise));
 
 		var cosY = Math.cos(cam.yaw), sinY = Math.sin(cam.yaw);
@@ -520,13 +602,24 @@
 					var p2 = project(x1, L.y1 + yOff, z1);
 					var p3 = project(x0, L.y1 + yOff, z0);
 
-					var dot = nx * LX + nz * LZ;
-					var lit = 0.46 + 0.62 * Math.max(0, dot);
+					// 面中心（物体空间），烛光要按真实距离算
+					var fx = mx * L.r;
+					var fz = mz * L.r;
+					var fy = (L.y0 + L.y1) / 2;
+
+					// 越靠下越暗；蛋糕层紧贴上方奶油的那一圈压一条接触阴影
+					var dim = 0.82 + 0.18 * ((fy - L.y0) / Math.max(1, L.y1 - L.y0));
+					var fromTop = L.y1 - fy;
+					if (L.kind === 'cake' && fromTop < 16) dim *= 0.70 + 0.30 * (fromTop / 16);
 
 					faces.push({
 						z: (p0.z + p1.z + p2.z + p3.z) / 4,
 						pts: [p0, p1, p2, p3],
-						col: shade(L.side, lit)
+						col: lightFace(L.side, fx, fy, fz, nx, 0, nz, {
+							spec: L.kind === 'cream' ? 0.40 : (L.kind === 'plate' ? 0.34 : 0.08),
+							shin: L.kind === 'cream' ? 26 : 18,
+							dim: dim
+						})
 					});
 				}
 
@@ -538,7 +631,10 @@
 					faces.push({
 						z: (c0.z + t1.z + t2.z) / 3 + 0.5,
 						pts: [c0, t1, t2],
-						col: shade(L.top, 1.02)
+						col: lightFace(L.top, mx * L.r * 0.75, L.y1, mz * L.r * 0.75, 0, 1, 0, {
+							spec: L.kind === 'cream' ? 0.22 : 0.05,
+							shin: 34
+						})
 					});
 				}
 			}
@@ -596,6 +692,24 @@
 			faces.push({ z: hp.z - 0.9, pts: null, circle: { x: hp.x, y: hp.y, r: Hc.rad * hp.s }, grad: hg, col: '#b81f3d' });
 		}
 
+		// 糖粒：沿侧面切向画一小段圆头线
+		for (var si = 0; si < sprinkles.length; si++) {
+			var S = sprinkles[si];
+			var ca = Math.cos(S.a), sa = Math.sin(S.a);
+			var snx = ca * cosY - sa * sinY;
+			var snz = ca * sinY + sa * cosY;
+			if (snz > 0.02) continue;                 // 背面的不画
+
+			var ax = ca * S.r, az = sa * S.r;
+			var e1 = project(ax, S.y + yOff, az);
+			var e2 = project(ax - sa * S.len, S.y + yOff, az + ca * S.len);
+			faces.push({
+				z: e1.z - 0.35,
+				seg: { x1: e1.x, y1: e1.y, x2: e2.x, y2: e2.y, w: Math.max(1.1, 1.25 * e1.s) },
+				col: S.col
+			});
+		}
+
 		faces.sort(function (a, b) { return b.z - a.z; });
 		return faces;
 	}
@@ -623,10 +737,18 @@
 
 		ctx.save();
 		ctx.globalAlpha = cakeRise;
+		ctx.lineCap = 'round';
 
 		for (var i = 0; i < faces.length; i++) {
 			var f = faces[i];
-			if (f.circle) {
+			if (f.seg) {
+				ctx.strokeStyle = f.col;
+				ctx.lineWidth = f.seg.w;
+				ctx.beginPath();
+				ctx.moveTo(f.seg.x1, f.seg.y1);
+				ctx.lineTo(f.seg.x2, f.seg.y2);
+				ctx.stroke();
+			} else if (f.circle) {
 				ctx.fillStyle = f.grad || f.col;
 				ctx.beginPath();
 				ctx.arc(f.circle.x, f.circle.y, Math.max(0.6, f.circle.r), 0, TAU);
@@ -1156,7 +1278,9 @@
 	}
 
 	function setupControls() {
-		document.getElementById('micBtn').addEventListener('click', async function (e) {
+		// 麦克风按钮可能被注掉（微信里基本拿不到权限），取不到就跳过，不能让整页崩
+		var micBtn = document.getElementById('micBtn');
+		if (micBtn) micBtn.addEventListener('click', async function (e) {
 			var btn = e.currentTarget;
 			var ok = await startMic();
 			if (ok) {
@@ -1171,6 +1295,7 @@
 		});
 
 		var holdBtn = document.getElementById('holdBtn');
+		if (!holdBtn) return;
 		var startHold = function (e) {
 			e.preventDefault();
 			holding = true;
