@@ -19,7 +19,11 @@
         逐句轮播：进 → 停 → 出。可以用 <strong> 和
         <span class="smile">:)</span>。最后一句停住不退。
 
-     { kind: 'para', text: '一段稍长的文字，会自动换行排版。' }
+     { kind: 'para', text: '很长的一封信……\n可以换行，会逐字打出来，超出高度自动滚动。', cps: 32, sign: '—— 落款' }
+        长信模式：逐字打字机 + 光标 + 自动跟随滚动。
+        打字途中点一下 = 立刻写完；写完之后再点一下 = 翻到下一幕。
+        cps   每秒打几个字（默认 32）
+        sign  可选的落款，写完后淡入
         信纸感的段落，适合放长一点的心里话。
 
      { kind: 'so', chars: ['所', '以'] }
@@ -73,8 +77,20 @@
 
     {
       kind: "para",
-      hold: 3400,
-      text: "这里可以写一整段。比如你们第一次见面的那天，\n天气怎么样，你穿了什么，说了什么。",
+      hold: 2600,
+      cps: 30,
+      sign: "—— 那个不太会说话的人",
+      // ↓↓↓ 这封信是草稿，按你自己的话说就行，长短随意
+      text:
+        "娇娇：\n\n" +
+        "写这封信之前我删了很多次。\n\n" +
+        "一开始想写得漂亮一点，翻了半天句子，最后发现那些话谁都能说。所以还是照我平时的样子写吧，可能有点笨。\n\n" +
+        "认识你之后我多了一些以前没有的习惯。走路会突然想起你说过的一句话，然后自己笑一下；看到什么好玩的，第一反应是「这个她应该会喜欢」。\n\n" +
+        "我以前不太懂别人说的「有了牵挂」是什么意思。现在懂了 —— 你的消息我会第一时间看，你半天没回，我会开始想是不是出什么事了。\n\n" +
+        "你有时候说自己胆小，怕很多还没发生的事。我想说的是，不用急着变勇敢。你可以怕，可以慢慢来，我在旁边等着就行。\n\n" +
+        "这一年我不一定能给你多厉害的东西。我能保证的只有一件：你难过的时候，我一定是第一批到的人之一。\n\n" +
+        "生日快乐。\n" +
+        "不是客套话，是真的希望你今天开心，明天也开心，一直开心下去。",
     },
     {
       kind: "lines",
@@ -244,10 +260,17 @@
       p.textContent = sc.text || "";
       s.appendChild(p);
     } else if (sc.kind === "para") {
+      // 长信：卡纸 + 可滚动 + 逐字打出
       s = newScene();
+      var card = make("div", "letter");
       var pa = make("p", "s-para");
-      pa.textContent = sc.text || "";
-      s.appendChild(pa);
+      card.appendChild(pa);
+      s.appendChild(card);
+      if (sc.sign) {
+        var sign = make("p", "letter-sign");
+        sign.textContent = sc.sign;
+        s.appendChild(sign);
+      }
     } else if (sc.kind === "chat") {
       s = newScene();
       var box = make("div", "fakebox");
@@ -428,6 +451,67 @@
     return sc.gap || DEFAULT.gap;
   }
 
+  // 长文本打字机：整段一次性铺开太贵，用 textContent 切片而不是逐字建 span。
+  // 打字途中点一下 = 立刻写完全部；写完之后再点一下才是翻页（由 dwell 负责）。
+  function typeLong(sc, token) {
+    var node = sc.el.querySelector(".s-para");
+    var card = sc.el.querySelector(".letter");
+    var text = sc.text || "";
+    var cps = sc.cps || 32; // 每秒打几个字
+    node.textContent = "";
+    node.classList.add("typing");
+
+    var shown = 0;
+    var t0 = performance.now();
+
+    return new Promise(function (res) {
+      var done = false;
+
+      function unfollow() {
+        document.removeEventListener("pointerdown", onTap, true);
+        node.classList.remove("typing");
+      }
+      function toEnd() {
+        if (card) card.scrollTop = card.scrollHeight;
+      }
+      function finish() {
+        if (done) return;
+        done = true;
+        unfollow();
+        node.textContent = text;
+        toEnd();
+        res(token === TOKEN);
+      }
+      function onTap(e) {
+        if (e.target && e.target.closest && e.target.closest(".bgm")) return;
+        finish(); // 点一下直接写完
+      }
+      function step(now) {
+        if (token !== TOKEN) {
+          done = true;
+          unfollow();
+          res(false);
+          return;
+        }
+        if (done) return;
+        var want = Math.floor(((now - t0) / 1000) * cps);
+        if (want > shown) {
+          shown = Math.min(want, text.length);
+          node.textContent = text.slice(0, shown);
+          toEnd();
+        }
+        if (shown >= text.length) {
+          finish();
+          return;
+        }
+        requestAnimationFrame(step);
+      }
+
+      document.addEventListener("pointerdown", onTap, true);
+      requestAnimationFrame(step);
+    });
+  }
+
   async function playLine(el, ms, gp, token, keep) {
     el.classList.remove("leave");
     el.classList.add("show");
@@ -461,6 +545,11 @@
         ok = await playLine(sc.els[i], holdOf(sc), gapOf(sc), token, keep);
         if (!ok) return false;
       }
+    } else if (sc.kind === "para") {
+      if (!(await wait(420 * SPEED, token))) return false;
+      ok = await typeLong(sc, token);
+      if (!ok) return false;
+      ok = await dwell(holdOf(sc), token);
     } else {
       ok = await dwell(holdOf(sc), token);
     }
