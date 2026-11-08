@@ -295,6 +295,48 @@ body {
 	animation: heartBeat 1.8s ease-in-out infinite;
 }
 
+/* ---------- 封面照片版印章 ---------- */
+.seal-photo {
+	position: relative;
+	width: 134px;
+	height: 134px;
+	padding: 0;
+	border-radius: 50%;
+	background: none;
+	border: 1px solid rgba(255, 184, 208, 0.5);
+	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 20px 60px rgba(255, 61, 127, 0.35);
+}
+
+/* 圆角放在图片自己身上，容器不裁 —— 否则右下角的小爱心会被切掉 */
+.seal-photo img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: 50% 25%;   /* 竖图裁成圆形，取偏上部分；脸位不对就改这个百分比 */
+	display: block;
+	border-radius: 50%;
+	transform: scale(1.02);
+}
+
+/* 右下角小爱心 */
+.seal-badge {
+	position: absolute;
+	right: -2px;
+	bottom: -2px;
+	width: 34px;
+	height: 34px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	font-size: 16px;
+	color: #fff;
+	background: linear-gradient(135deg, #ff6b9d, #ff3d7f);
+	box-shadow: 0 4px 14px rgba(255, 61, 127, 0.6);
+	border: 2px solid rgba(10, 6, 14, 0.85);
+	animation: heartBeat 1.8s ease-in-out infinite;
+}
+
 @keyframes heartBeat {
 	0%, 100% { transform: scale(1); }
 	14% { transform: scale(1.16); }
