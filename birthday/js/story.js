@@ -88,7 +88,7 @@
         "认识你之后我发现我比之前健谈了许多, 有时想到你还会不自觉的傻傻发笑\n\n" +
         "我以前不太懂别人说的「有了牵挂」是什么意思。现在懂了 —— 你的消息我会第一时间看，你半天没回，我会开始想是不是出什么事了。\n\n" +
         "虽分隔两地, 但我对于你可是时常想念呀; 希望你可以快快好起来, 一起去体验以后得岁月 \n\n" +
-        "我一直是非常喜欢月亮的这意象的,「海上生明月, 天涯共此时」 抬头望月, 看到月亮就如古人般遥寄思念到远方的亲人\n\n" +
+        "我一直是非常喜欢月亮的这意象的, 明月高挂, 见月思人;「海上生明月, 天涯共此时」 抬头望月, 看到月亮就如古人般遥寄思念到远方的佳人\n\n" +
         "我不一定能给你多厉害的东西,  但我想一直陪在你身边。\n\n" +
         "生日快乐。\n" +
         "不是客套话，是真的希望你今天开心，明天也开心，一直开心下去。",
@@ -138,7 +138,7 @@
 
   // ★ 长信打字速度：每秒打几个字。越小越慢，调这一个数就行。
   //   8 = 很慢很慢（像真的在手写）；14 = 偏慢；22 = 正常；35 = 赶时间
-  var LETTER_CPS = 14;
+  var LETTER_CPS = 10;
 
   var TAP_HINT_DELAY = 900; // 超过这么久没点，才浮出「轻触继续」提示
   var MIN_SETTLE = 550; // 进场动画至少播这么久才接受点击，防止误触连跳
@@ -611,15 +611,24 @@
     );
 
     var splash = document.getElementById("splash");
+    var unsealed = false;
     var go = function () {
+      // 第一下：拆信封（照片从里面滑出来），顺便把音乐解锁
+      if (!unsealed) {
+        unsealed = true;
+        splash.classList.add("opening");
+        // 轻触这一帧必须把两条音轨都「用掉」：轻音乐直接起，
+        // 生日歌在 demo.js 里以 0 音量预热，切换时才不会被 iOS 拦
+        if (window.__bgmStartStory) window.__bgmStartStory();
+        setTimeout(function () { splash.classList.add("opened"); }, 1350);
+        return;   // 停在封面，等第二下
+      }
+      // 第二下：收起封面，开始叙事
       splash.removeEventListener("pointerdown", go);
       splash.classList.add("gone");
       setTimeout(function () {
         splash.style.display = "none";
       }, 1000);
-      // 轻触这一帧必须把两条音轨都「用掉」：轻音乐直接起，
-      // 生日歌在 demo.js 里以 0 音量预热，切换时才不会被 iOS 拦
-      if (window.__bgmStartStory) window.__bgmStartStory();
       run();
     };
     splash.addEventListener("pointerdown", go);

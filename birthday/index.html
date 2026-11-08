@@ -25,9 +25,35 @@
 	<!-- ============ 第 0 幕：轻触开启 ============ -->
 	<div class="splash" id="splash">
 		<div class="splash-inner">
-			<div class="seal seal-photo">
-				<img src="img/avator.jpg" alt="">
-				<span class="seal-badge">❤</span>
+			<div class="splash-stage">
+				<!-- 信封：点一下才拆 -->
+				<div class="envelope">
+					<div class="env-body">
+						<span class="env-heart">❤</span>
+						<!-- 邮戳 -->
+						<div class="env-stamp" aria-hidden="true">
+							<svg viewBox="0 0 100 100">
+								<defs>
+									<path id="stampArc" d="M 18,54 A 32,32 0 0 1 82,54" fill="none" />
+								</defs>
+								<circle cx="50" cy="50" r="47" fill="none" stroke="currentColor" stroke-width="2.6" />
+								<circle cx="50" cy="50" r="39.5" fill="none" stroke="currentColor" stroke-width="0.9" />
+								<text font-size="9.5" letter-spacing="1.5" fill="currentColor">
+									<textPath href="#stampArc" startOffset="50%" text-anchor="middle">WITH LOVE</textPath>
+								</text>
+								<text x="50" y="60" font-size="20" font-weight="800" letter-spacing="1.2"
+									text-anchor="middle" fill="currentColor">LOVE</text>
+								<text x="50" y="72" font-size="8" letter-spacing="2"
+									text-anchor="middle" fill="currentColor">— ♥ —</text>
+							</svg>
+						</div>
+					</div>
+					<div class="env-flap"></div>
+				</div>
+				<div class="seal seal-photo">
+					<img src="img/avator.jpg" alt="">
+					<span class="seal-badge">❤</span>
+				</div>
 			</div>
 			<p class="splash-hint">娇娇亲启</p>
 		</div>

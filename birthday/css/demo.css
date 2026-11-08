@@ -283,9 +283,10 @@ body {
 	animation: sealBreath 3.2s ease-in-out infinite;
 }
 
+/* 只呼吸光晕，不动 transform —— transform 留给拆信封的入场动画 */
 @keyframes sealBreath {
-	0%, 100% { transform: scale(1); box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 60px rgba(255,61,127,0.22); }
-	50% { transform: scale(1.05); box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 24px 76px rgba(255,61,127,0.42); }
+	0%, 100% { box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 60px rgba(255,61,127,0.22); }
+	50% { box-shadow: 0 0 0 1px rgba(255,255,255,0.10), 0 26px 84px rgba(255,61,127,0.48); }
 }
 
 .seal-heart {
@@ -356,8 +357,8 @@ body {
 }
 
 @keyframes hintBlink {
-	0%, 100% { opacity: 0.35; }
-	50% { opacity: 0.95; }
+	0%, 100% { text-shadow: 0 0 16px rgba(255,107,157,0.5), 0 0 40px rgba(255,61,127,0.22); }
+	50% { text-shadow: 0 0 26px rgba(255,107,157,1), 0 0 66px rgba(255,61,127,0.65); }
 }
 
 /* ============================================================
@@ -594,4 +595,184 @@ body {
 @keyframes musicHintBreath {
 	0%, 100% { box-shadow: 0 8px 30px rgba(255, 61, 127, 0.22); }
 	50% { box-shadow: 0 8px 40px rgba(255, 61, 127, 0.55); }
+}
+
+/* ============================================================
+   拆信封开场
+   ============================================================ */
+.splash-stage {
+	position: relative;
+	width: 200px;
+	height: 372px;
+	margin: 0 auto 26px;
+	perspective: 700px;
+}
+
+/* ---------- 信封 ---------- */
+.envelope {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 196px;
+	height: 152px;
+	margin: -76px 0 0 -98px;
+	transform-style: preserve-3d;
+	transition: opacity 0.5s ease 0.55s, transform 0.5s ease 0.55s;
+}
+
+.env-body {
+	position: absolute;
+	inset: 0;
+	border-radius: 9px;
+	background: linear-gradient(150deg, #3a1c2c 0%, #52243a 55%, #6b2c47 100%);
+	border: 1px solid rgba(255, 184, 208, 0.35);
+	box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* 信封正面的斜折线，让它像信封而不是一个色块 */
+.env-body::before,
+.env-body::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 62%;
+	background: linear-gradient(150deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0));
+	pointer-events: none;
+}
+.env-body::before {
+	left: 0;
+	clip-path: polygon(0 0, 100% 50%, 0 100%);
+	border-radius: 9px 0 0 9px;
+}
+.env-body::after {
+	right: 0;
+	clip-path: polygon(100% 0, 0 50%, 100% 100%);
+	border-radius: 0 9px 9px 0;
+}
+
+.env-heart {
+	position: relative;
+	z-index: 2;
+	font-size: 26px;
+	color: rgba(255, 143, 180, 0.85);
+	text-shadow: 0 0 20px rgba(255, 107, 157, 0.9);
+	animation: heartBeat 1.8s ease-in-out infinite;
+}
+
+/* 信封盖：三角形，从顶边翻下去 */
+.env-flap {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	height: 78px;
+	background: linear-gradient(160deg, #6b2c47 0%, #52243a 60%, #3a1c2c 100%);
+	border: 1px solid rgba(255, 184, 208, 0.35);
+	border-bottom: none;
+	clip-path: polygon(0 0, 100% 0, 50% 100%);
+	transform-origin: top center;
+	transform: rotateX(0deg);
+	transition: transform 0.62s cubic-bezier(0.5, 0, 0.3, 1);
+	z-index: 3;
+}
+
+/* ---------- 照片：初始藏在信封里 ---------- */
+.splash-stage .seal-photo {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin: -176px 0 0 -75px;   /* 150x352 居中 */
+	opacity: 0;
+	transform: translateY(30px) scale(0.82);
+	animation: none;
+	z-index: 1;
+}
+
+/* ---------- 第一下：拆信封 ---------- */
+.splash.opening .env-flap {
+	transform: rotateX(-180deg);
+}
+
+.splash.opening .envelope {
+	opacity: 0;
+	transform: translateY(-16px) scale(0.96);
+}
+
+.splash.opening .splash-stage .seal-photo {
+	animation: photoRise 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.42s forwards;
+}
+
+@keyframes photoRise {
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+/* 拆完之后照片恢复呼吸光晕。
+   注意：终态必须显式写，不能靠 photoRise 的 forwards 填充 ——
+   一旦换成 sealBreath，旧动画被顶掉，填充值就没了，照片会退回 opacity:0 */
+.splash.opened .splash-stage .seal-photo {
+	opacity: 1;
+	transform: translateY(0) scale(1);
+	animation: sealBreath 3.2s ease-in-out infinite;
+}
+
+.splash.opened .envelope {
+	display: none;
+}
+
+
+/* ---------- 长按「再看一次」的进度反馈 ---------- */
+.again {
+	overflow: hidden;
+}
+
+.again.holding {
+	transform: scale(0.94);
+	color: #fff;
+}
+
+.again.holding::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	height: 2px;
+	width: 0;
+	background: linear-gradient(90deg, #ffd76b, #ff3d7f);
+	animation: againHold 2s linear forwards;
+}
+
+@keyframes againHold {
+	to { width: 100%; }
+}
+
+/* ---------- 信封上的 LOVE 邮戳 ---------- */
+.env-stamp {
+	position: absolute;
+	right: 13px;
+	bottom: 10px;
+	width: 62px;
+	height: 62px;
+	z-index: 4;
+	color: rgba(255, 152, 186, 0.92);
+	transform: rotate(-13deg);
+	filter: drop-shadow(0 0 7px rgba(255, 107, 157, 0.5));
+	pointer-events: none;
+}
+
+.env-stamp svg {
+	display: block;
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+.env-stamp text {
+	font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
 }

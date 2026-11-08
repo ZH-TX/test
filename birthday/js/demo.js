@@ -1624,6 +1624,31 @@
 		buildTextTargets();
 	}
 
+	// 长按「再看一次」→ 跳过 80 秒叙事，直接落到蛋糕幕
+	function jumpToCake() {
+		started = true;
+		textDone = true;
+		textParticles.length = 0;
+		cakeRise = 0;
+		cakeFade = 1;
+		blow = 0;
+		micLevel = 0;
+		smoke.length = 0;
+		fireParticles.length = 0;
+		rockets.length = 0;
+		muaTexts.length = 0;
+		flash = 0;
+		captionEl.classList.remove('on');
+		againEl.classList.remove('on');
+		meterEl.classList.remove('on');
+		updateMeter(0);
+		for (var i = 0; i < candles.length; i++) {
+			candles[i].alive = 1;
+			candles[i].dying = false;
+		}
+		setPhase('cake');
+	}
+
 	function restart() {
 		phase = 'text';
 		tStart = T;
@@ -1659,7 +1684,33 @@
 		sampleText();
 		setupControls();
 		armBgm();
-		againEl.addEventListener('click', restart);
+		// 「再看一次」：短按重播，长按 2 秒直接跳蛋糕幕
+		var againTimer = null;
+		var againLongDone = false;
+
+		againEl.addEventListener('pointerdown', function (e) {
+			e.stopPropagation();
+			againLongDone = false;
+			againEl.classList.add('holding');
+			againTimer = setTimeout(function () {
+				againLongDone = true;
+				againEl.classList.remove('holding');
+				jumpToCake();
+			}, 2000);
+		});
+
+		['pointerup', 'pointerleave', 'pointercancel'].forEach(function (ev) {
+			againEl.addEventListener(ev, function () {
+				clearTimeout(againTimer);
+				againEl.classList.remove('holding');
+			});
+		});
+
+		againEl.addEventListener('click', function (e) {
+			e.stopPropagation();
+			if (againLongDone) { againLongDone = false; return; }   // 长按已经处理过
+			restart();
+		});
 
 		// 叙事九幕（story.js）通过这些钩子驱动音频和画布
 		window.__startShow = startShow;
