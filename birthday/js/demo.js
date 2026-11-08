@@ -445,6 +445,7 @@
 	var fireParticles = [];
 	var rockets = [];
 	var flash = 0;
+	var cakeSquash = 0;      // 点蛋糕时的弹性形变 0→1，自然衰减
 
 	function relayoutSmoke() { /* 烟是屏幕空间粒子，换尺寸无需重建 */ }
 
@@ -487,6 +488,72 @@
 			ctx.arc(p.x, p.y, p.r, 0, TAU);
 			ctx.fill();
 		}
+	}
+
+	// ---- mua~ 弹幕彩蛋 ----
+	// 吹灭蜡烛那一刻从蛋糕上方冒出来，往上飘、旋转、淡出
+	var muaTexts = [];
+	var MUA_WORDS = ['mua~', 'mua~', 'mua~', 'mua~❤', 'muamuamua~'];
+
+	function spawnMua(x, y) {
+		var word = MUA_WORDS[(Math.random() * MUA_WORDS.length) | 0];
+		muaTexts.push({
+			x: x + (Math.random() - 0.5) * (isMobile ? 120 : 190),
+			y: y + (Math.random() - 0.5) * 46,
+			vx: (Math.random() - 0.5) * 34,
+			vy: -50 - Math.random() * 42,
+			life: 1,
+			decay: 0.34 + Math.random() * 0.2,
+			size: (isMobile ? 14 : 17) + Math.random() * 13,
+			rot: (Math.random() - 0.5) * 0.5,
+			spin: (Math.random() - 0.5) * 0.7,
+			hue: 328 + Math.random() * 26,
+			word: word
+		});
+		// 上限保护：连点也不让粒子无限堆
+		if (muaTexts.length > 40) muaTexts.shift();
+	}
+
+	// 从蛋糕顶上方冒
+	function spawnMuaAtCake() {
+		var yOff = -110 * (1 - easeOutCubic(cakeRise));
+		var p = project(0, CAKE_TOP_Y + yOff, 0);
+		spawnMua(p.x, p.y);
+	}
+
+	function updateMua(dt) {
+		for (var i = muaTexts.length - 1; i >= 0; i--) {
+			var m = muaTexts[i];
+			m.x += m.vx * dt;
+			m.y += m.vy * dt;
+			m.vy += 26 * dt;          // 上升慢慢减速
+			m.vx *= 0.986;
+			m.rot += m.spin * dt;
+			m.life -= m.decay * dt;
+			if (m.life <= 0) muaTexts.splice(i, 1);
+		}
+	}
+
+	function drawMua() {
+		if (!muaTexts.length) return;
+		ctx.save();
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+		ctx.shadowColor = 'rgba(255, 107, 157, 0.85)';
+		for (var i = 0; i < muaTexts.length; i++) {
+			var m = muaTexts[i];
+			var a = Math.max(0, m.life);
+			ctx.globalAlpha = a;
+			ctx.shadowBlur = 16 * a;
+			ctx.fillStyle = 'hsl(' + m.hue + ',92%,80%)';
+			ctx.font = '700 ' + m.size.toFixed(1) + 'px "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
+			ctx.translate(m.x, m.y);
+			ctx.rotate(m.rot);
+			ctx.fillText(m.word, 0, 0);
+			ctx.rotate(-m.rot);
+			ctx.translate(-m.x, -m.y);
+		}
+		ctx.restore();
 	}
 
 	function launchRocket() {
@@ -540,6 +607,7 @@
 			if (p.life <= 0) fireParticles.splice(j, 1);
 		}
 		flash *= 0.90;
+		if (cakeSquash > 0) cakeSquash = Math.max(0, cakeSquash - dt * 3.4);
 	}
 
 	function drawFire() {
@@ -750,8 +818,17 @@
 	function drawCake() {
 		if (cakeRise <= 0.001) return;
 
-		// 地面投影阴影
 		var base = project(0, CAKE_BOT_Y, 0);
+
+		// 点一下蛋糕，整块以底部为原点做一次横向拉宽 / 纵向压扁的弹性形变
+		ctx.save();
+		if (cakeSquash > 0.001) {
+			var sq = cakeSquash;
+			ctx.translate(base.x, base.y);
+			ctx.scale(1 + sq * 0.05, 1 - sq * 0.05);
+			ctx.translate(-base.x, -base.y);
+		}
+
 		var shR = 176 * base.s;
 		var sg = ctx.createRadialGradient(base.x, base.y, 0, base.x, base.y, shR);
 		sg.addColorStop(0, 'rgba(0,0,0,0.55)');
@@ -821,6 +898,7 @@
 			}
 		}
 		ctx.restore();
+		ctx.restore();   // 收掉开头那层形变变换
 	}
 
 	/* ---------------------------------------------------------------------
@@ -1415,6 +1493,15 @@
 			for (var i = 0; i < 4; i++) {
 				setTimeout(launchRocket, i * 260 + Math.random() * 180);
 			}
+			// mua~ 彩蛋：从蛋糕上方一簇一簇往上冒
+			var muaN = isMobile ? 7 : 10;
+			for (var k = 0; k < muaN; k++) {
+				setTimeout(spawnMuaAtCake, 260 + k * 210 + Math.random() * 140);
+			}
+			// 隔一秒再来一小撮，别一次放完
+			for (var k2 = 0; k2 < 4; k2++) {
+				setTimeout(spawnMuaAtCake, 2600 + k2 * 320);
+			}
 		}
 	}
 
@@ -1498,6 +1585,7 @@
 		updateTextParticles(dt);
 		updateSmoke(dt);
 		updateFire(dt);
+		updateMua(dt);
 
 		// 蛋糕自转
 		if (phase !== 'text') cam.yaw += dt * 0.16;
@@ -1511,6 +1599,7 @@
 		if (phase === 'cake' || phase === 'wish') drawFlames();
 		drawSmoke();
 		drawFire();
+		drawMua();
 	}
 
 	function frame(now) {
@@ -1546,6 +1635,7 @@
 		smoke.length = 0;
 		fireParticles.length = 0;
 		rockets.length = 0;
+		muaTexts.length = 0;
 		flash = 0;
 		captionEl.classList.remove('on');
 		againEl.classList.remove('on');
@@ -1575,6 +1665,23 @@
 		window.__startShow = startShow;
 		window.__bgmStartStory = bgmStartStory;
 		window.__bgmSwitch = bgmSwitchToBirthday;
+		// 点蛋糕：它会颤一下（蛋糕幕和许愿幕都有效）
+		document.addEventListener('pointerdown', function (e) {
+			if (phase !== 'cake' && phase !== 'wish') return;
+			if (e.target && e.target.closest && e.target.closest('.bgm, .again, .actions')) return;
+			var b = project(0, (CAKE_TOP_Y + CAKE_BOT_Y) / 2, 0);
+			var r = (isMobile ? 210 : 300);
+			var dx = e.clientX - b.x, dy = e.clientY - b.y;
+			if (dx * dx + dy * dy < r * r) cakeSquash = 1;
+		}, true);
+
+		// 许愿幕：点哪儿就在哪儿冒一个 mua~（小彩蛋）
+		document.addEventListener('pointerdown', function (e) {
+			if (phase !== 'wish') return;
+			if (e.target && e.target.closest && e.target.closest('.bgm, .again')) return;
+			spawnMua(e.clientX, e.clientY);
+		}, true);
+
 		window.__trackStatus = trackStatus;
 
 		var onResize = null;
