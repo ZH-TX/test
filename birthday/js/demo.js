@@ -939,8 +939,8 @@
 	     叙事九幕  → music/story.mp3         （轻音乐，垫情绪）
 	     蛋糕互动  → music/happy-birthday.mp3（生日歌，进正片才起）
 
-	   两个都自己托管，不挂外链：netlify / pixabay 的直链在国内时通时不通，
-	   送出去的页面不能赌这个。合成版（Web Audio）留作生日歌的兜底。
+	   两个都自己托管在 music/ 下，不发任何外部请求。
+	   合成版（Web Audio）留作生日歌的兜底。
 
 	   音频必须由用户手势触发，但「下载」不用等手势：
 	   页面一加载就预建两个 <audio> 并 preload="auto"，把下载摊在开场封面那几秒；
@@ -950,8 +950,13 @@
 	   也必须在那一次手势里先 play 一下（0 音量），否则隔 80 秒再调 play()
 	   会被静默拦掉。所以点击时仍有「预热」这一步。
 	   --------------------------------------------------------------------- */
-	var BGM_STORY_URL = 'https://friendly-paprenjak-ad64b7.netlify.app/music/bgMusic.mp3';
-	var BGM_STORY_URL_FALLBACK = 'music/story.mp3';   // 远程拿不到时退回本地那份
+	// ★ 本地优先：叙事音乐直接用仓库里的文件，不发任何外部请求。
+	//   之前主源挂的是 netlify 直链，国内时通时不通，而且请求挂起时既不返回
+	//   也不触发 error，导致「等线上 → 等不到 → 本地兜底永远不执行」= 没声音。
+	var BGM_STORY_URL = 'music/story.mp3';
+	// 想换回线上：把上面那行换成下面这条即可（默认不走）
+	// var BGM_STORY_URL = 'https://friendly-paprenjak-ad64b7.netlify.app/music/bgMusic.mp3';
+	var BGM_STORY_URL_FALLBACK = '';   // 本地为主，不再需要远程兜底
 	var BGM_STORY_VOLUME = 0.50;
 	var BGM_STORY_OFFSET = 0;     // 从第几秒开始播，默认从头
 
@@ -1111,18 +1116,7 @@
 				storyEl.dataset.ready = 'ready';
 			});
 			storyEl.addEventListener('error', function () {
-				// 远程拿不到就换本地那份，并且立刻重新发起下载
-				if (!BGM_STORY_URL_FALLBACK || storyEl.src.indexOf(BGM_STORY_URL_FALLBACK) >= 0) return;
-				storyEl.dataset.ready = 'loading';
-				storyEl.src = BGM_STORY_URL_FALLBACK;
-				storyEl.load();
-				// 若失败发生在点击之后（已经在放了），换源后要重新起播，
-				// 否则只剩一个加载好但静止的元素 —— 就是「进去没音乐」。
-				if (storyActive) {
-					playWithRetry(storyEl);
-					seekOnReady(storyEl, BGM_STORY_OFFSET);
-					if (bgmOn) fadeEl(storyEl, BGM_STORY_VOLUME, 800, false);
-				}
+				storyEl.dataset.ready = 'error';
 			});
 			storyEl.load();
 		}
