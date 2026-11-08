@@ -942,9 +942,13 @@
 	   两个都自己托管，不挂外链：netlify / pixabay 的直链在国内时通时不通，
 	   送出去的页面不能赌这个。合成版（Web Audio）留作生日歌的兜底。
 
-	   音频必须由用户手势触发。微信 iOS 尤其严格 —— 光在开头点一次不够，
-	   生日歌那个 <audio> 也必须在那一次手势里先 play 一下（0 音量），
-	   否则 32 秒后再调 play() 会被静默拦掉。所以下面有个「预热」。
+	   音频必须由用户手势触发，但「下载」不用等手势：
+	   页面一加载就预建两个 <audio> 并 preload="auto"，把下载摊在开场封面那几秒；
+	   点击那一帧只负责解锁播放，不新建元素。网络慢或抖的时候不至于进去没声。
+
+	   微信 iOS 尤其严格 —— 光在开头点一次不够，生日歌那个 <audio>
+	   也必须在那一次手势里先 play 一下（0 音量），否则隔 80 秒再调 play()
+	   会被静默拦掉。所以点击时仍有「预热」这一步。
 	   --------------------------------------------------------------------- */
 	var BGM_STORY_URL = 'https://friendly-paprenjak-ad64b7.netlify.app/music/bgMusic.mp3';
 	var BGM_STORY_URL_FALLBACK = 'music/story.mp3';   // 远程拿不到时退回本地那份
@@ -1089,11 +1093,62 @@
 	// 外部音源只用 <audio> 播，绝不塞进 AudioContext（跨域会被 taint 成静音）
 	function makeTrack(url) {
 		var el = new Audio();
-		el.preload = 'auto';
+		el.preload = 'auto';        // 关键：建好就开始下，不等点击
 		el.loop = true;
 		el.volume = 0;
 		el.src = url;
 		return el;
+	}
+
+	// 页面加载时就调用：两条轨都提前建好、提前开始缓冲。
+	// 只下载不播放（浏览器自动播放策略管的是 play()，不管 load/preload）。
+	// 带一个就绪标记，方便点击时知道资源到什么程度了。
+	function preloadTracks() {
+		if (!storyEl) {
+			storyEl = makeTrack(BGM_STORY_URL);
+			storyEl.dataset.ready = 'loading';
+			storyEl.addEventListener('canplaythrough', function () {
+				storyEl.dataset.ready = 'ready';
+			});
+			storyEl.addEventListener('error', function () {
+				// 远程拿不到就换本地那份，并且立刻重新发起下载
+				if (!BGM_STORY_URL_FALLBACK || storyEl.src.indexOf(BGM_STORY_URL_FALLBACK) >= 0) return;
+				storyEl.dataset.ready = 'loading';
+				storyEl.src = BGM_STORY_URL_FALLBACK;
+				storyEl.load();
+				// 若失败发生在点击之后（已经在放了），换源后要重新起播，
+				// 否则只剩一个加载好但静止的元素 —— 就是「进去没音乐」。
+				if (storyActive) {
+					playWithRetry(storyEl);
+					seekOnReady(storyEl, BGM_STORY_OFFSET);
+					if (bgmOn) fadeEl(storyEl, BGM_STORY_VOLUME, 800, false);
+				}
+			});
+			storyEl.load();
+		}
+		if (!bgmEl) {
+			bgmEl = makeTrack(BGM_URL);
+			bgmEl.dataset.ready = 'loading';
+			bgmEl.addEventListener('canplaythrough', function () {
+				bgmEl.dataset.ready = 'ready';
+			});
+			bgmEl.addEventListener('error', function () {
+				bgmEl.dataset.ready = 'error';
+			});
+			bgmEl.load();
+		}
+	}
+
+	// 点击时若还在缓冲，给一个很轻的提示（不打断，只是不让人以为坏了）
+	function trackStatus() {
+		return {
+			story: storyEl ? storyEl.dataset.ready : 'none',
+			storyBuffered: storyEl && storyEl.buffered.length
+				? Math.round(storyEl.buffered.end(0)) : 0,
+			birthday: bgmEl ? bgmEl.dataset.ready : 'none',
+			birthdayBuffered: bgmEl && bgmEl.buffered.length
+				? Math.round(bgmEl.buffered.end(0)) : 0
+		};
 	}
 
 	// 元数据没加载完时设 currentTime 会被静默忽略，等 loadedmetadata 再跳
@@ -1148,17 +1203,8 @@
 		var ac = ensureAudio();
 		if (ac && ac.state === 'suspended') ac.resume();
 
-		if (!storyEl) {
-			storyEl = makeTrack(BGM_STORY_URL);
-			// 远程不通（或被墙）就换本地那份，别让叙事静着
-			storyEl.addEventListener('error', function () {
-				if (!BGM_STORY_URL_FALLBACK || storyEl.src.indexOf(BGM_STORY_URL_FALLBACK) >= 0) return;
-				storyEl.src = BGM_STORY_URL_FALLBACK;
-				storyEl.load();
-				playWithRetry(storyEl);
-				seekOnReady(storyEl, BGM_STORY_OFFSET);
-			});
-		}
+		// 元素在页面加载时就建好并开始下载了，这里只做解锁 + 起播
+		if (!storyEl) preloadTracks();          // 兜底：万一被清空了
 		storyActive = true;
 		storyEl.volume = 0;
 		playWithRetry(storyEl);
@@ -1166,8 +1212,8 @@
 		if (bgmOn) fadeEl(storyEl, BGM_STORY_VOLUME, 1500, false);
 		syncBgmBtn();
 
-		// 关键：在这次手势里先让生日歌静音跑起来。
-		// iOS 微信只认「元素在手势内被 play 过」，隔 30 秒再调 play() 会被拦。
+		// 关键：这次手势里也让生日歌静音跑一下。
+		// iOS 微信只认「元素在手势内被 play 过」，隔 80 秒再调 play() 会被拦。
 		if (!bgmEl) bgmEl = makeTrack(BGM_URL);
 		bgmEl.volume = 0;
 		playWithRetry(bgmEl);
@@ -1541,6 +1587,7 @@
 	}
 
 	function boot() {
+		preloadTracks();            // 第一件事：把两条音轨挂上开始下载
 		layout();
 		sampleText();
 		setupControls();
@@ -1551,6 +1598,7 @@
 		window.__startShow = startShow;
 		window.__bgmStartStory = bgmStartStory;
 		window.__bgmSwitch = bgmSwitchToBirthday;
+		window.__trackStatus = trackStatus;
 
 		var onResize = null;
 		window.addEventListener('resize', function () {
