@@ -296,25 +296,25 @@ body {
 }
 
 /* ---------- 封面照片版印章 ---------- */
+/* 高度交给图片自己撑开（原来的 height:100% 已按你的要求去掉） */
 .seal-photo {
 	position: relative;
-	width: 134px;
-	height: 134px;
+	width: 150px;
+	height: auto;
 	padding: 0;
-	border-radius: 50%;
+	border-radius: 10px;
 	background: none;
-	border: 1px solid rgba(255, 184, 208, 0.5);
+	border: 1px solid rgba(255, 184, 208, 0.42);
 	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 20px 60px rgba(255, 61, 127, 0.35);
 }
 
-/* 圆角放在图片自己身上，容器不裁 —— 否则右下角的小爱心会被切掉 */
 .seal-photo img {
 	width: 100%;
-	height: 100%;
+	/* height: 100%; */
 	object-fit: cover;
-	object-position: 50% 25%;   /* 竖图裁成圆形，取偏上部分；脸位不对就改这个百分比 */
+	/* object-position: 50% 25%; */
 	display: block;
-	border-radius: 50%;
+	border-radius: 10px;
 	transform: scale(1.02);
 }
 
@@ -346,10 +346,12 @@ body {
 }
 
 .splash-hint {
-	font-size: 13px;
+	font-size: 14px;
+	font-weight: 700;
 	letter-spacing: 0.42em;
 	text-indent: 0.42em;
-	color: rgba(255, 236, 242, 0.62);
+	color: #ff8fb4;                        /* 主题粉 */
+	text-shadow: 0 0 18px rgba(255, 107, 157, 0.85), 0 0 42px rgba(255, 61, 127, 0.45);
 	animation: hintBlink 2.6s ease-in-out infinite;
 }
 
