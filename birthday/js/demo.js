@@ -1149,6 +1149,57 @@
 		syncBgmBtn();
 	}
 
+	// ---- 顶部提示：只在「确实没声」时出现 ----
+	var musicHint = document.getElementById('musicHint');
+	var musicHintTimer = null;
+
+	function showMusicHint(on) {
+		if (musicHint) musicHint.classList.toggle('on', !!on);
+	}
+
+	// 音乐真的在响（未静音、未暂停、有进度）才算有声音
+	function musicAlive() {
+		if (!storyEl) return false;
+		if (storyEl.paused || storyEl.muted) return false;
+		return storyEl.currentTime > 0.15;
+	}
+
+	function checkMusicHint(delay) {
+		clearTimeout(musicHintTimer);
+		musicHintTimer = setTimeout(function () {
+			showMusicHint(!musicAlive());
+		}, delay == null ? 0 : delay);
+	}
+
+	function setupMusicHint() {
+		if (!musicHint) return;
+
+		// 播起来了就自动收起
+		if (storyEl) {
+			storyEl.addEventListener('playing', function () { showMusicHint(false); });
+		}
+
+		// 点提示 = 强推播放 + 顺手把开场封面推掉，直接进内容
+		musicHint.addEventListener('click', function (e) {
+			e.stopPropagation();
+			e.preventDefault();
+			unlockAudio();
+			if (storyEl && storyEl.paused) {
+				storyEl.muted = false;
+				storyEl.volume = BGM_STORY_VOLUME;
+				storyEl.play().catch(function () { });
+			}
+			var sp = document.getElementById('splash');
+			if (sp && !sp.classList.contains('gone')) {
+				sp.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+			}
+			setTimeout(function () { checkMusicHint(0); }, 600);
+		});
+
+		// 加载完等自动播放结果出来再判断（太早会误报）
+		checkMusicHint(2600);
+	}
+
 	function armAudioUnlock() {
 		['pointerdown', 'touchstart', 'keydown'].forEach(function (ev) {
 			document.addEventListener(ev, unlockAudio, true);
@@ -1513,6 +1564,7 @@
 	function boot() {
 		preloadTracks();            // 第一件事：建轨、下载、静音起播
 		armAudioUnlock();           // 任意一次交互即放声
+		setupMusicHint();           // 没声时顶部给个能点的提示
 		layout();
 		sampleText();
 		setupControls();

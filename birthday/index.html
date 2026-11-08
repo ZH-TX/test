@@ -14,6 +14,11 @@
 
 <body>
 	<!-- 第三幕的底：星尘 / 蛋糕 / 烟花都画在这张 canvas 上 -->
+	<!-- 音乐没响时的提示：点一下强制开启，同时进入内容 -->
+	<button class="music-hint" id="musicHint" type="button">
+		<span class="music-hint-icon">♪</span>没有音乐？点这里开启
+	</button>
+
 	<audio id="storyMusic" src="music/story.mp3" preload autoplay loop playsinline webkit-playsinline type="audio/mp3"></audio>
 	<canvas id="stage"></canvas>
 
