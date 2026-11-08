@@ -997,12 +997,8 @@
 	var bgmUnlocked = false;    // 是否已经摘掉 muted 放过声
 
 	// ---- 叙事音乐的 Web Audio 通道 ----
-	var storyGain = null;      // 叙事音乐总线增益（音量/静音都控制它）
-	var storySrcNode = null;   // 当前正在播的源节点
 	var storyStartedAt = 0;    // ctx.currentTime 起播时刻
 	var storyOffset = 0;       // 起播时落在文件内的秒数
-	var storyWebAudio = false; // 叙事轨是否走 Web Audio（成功即 true）
-	var storyBufferLen = 0;    // 叙事音频总长（秒），循环用
 	var bgmBtn = document.getElementById('bgmBtn');
 
 	function midiToFreq(m) { return 440 * Math.pow(2, (m - 69) / 12); }
@@ -1107,131 +1103,49 @@
 		g.linearRampToValueAtTime(on ? BGM_LEVEL : 0.0001, now + 0.3);
 	}
 
-	// 外部音源只用 <audio> 播，绝不塞进 AudioContext（跨域会被 taint 成静音）
+	// 音频：love/ 站点同款，<audio autoplay loop preload> + JSBridge + click 补播
 	function makeTrack(url) {
-		var el = document.createElement('audio');
-		el.preload = 'auto';        // 建好就开始下载，不等点击
+		var el = new Audio();
+		el.preload = 'auto';
 		el.loop = true;
-		el.muted = true;            // 静音状态，自动播才被浏览器允许
-		el.setAttribute('hidden', '');
-		el.setAttribute('aria-hidden', 'true');
-		el.style.cssText = 'position:fixed;width:0;height:0;overflow:hidden;pointer-events:none;';
+		el.volume = 0;
 		el.src = url;
-		document.body.appendChild(el);   // ★ 关键：必须在 DOM 里，
-		                                 //  游离元素连 muted autoplay 都会被 NotAllowedError 拒
 		return el;
 	}
 
-	// 页面加载时就调用：两条轨都提前建好、提前开始缓冲。
-	// 只下载不播放（浏览器自动播放策略管的是 play()，不管 load/preload）。
-	// 带一个就绪标记，方便点击时知道资源到什么程度了。
 	function preloadTracks() {
-		// 叙事轨：Web Audio 通道，页面加载即自动播放（这是主路径）
-		startStoryWebAudio();
-
-		// 生日歌：<audio> 通道，只在加载时预下载，起播等 unlockAudio 手势
+		// <audio autoplay loop> 已写在 HTML 里，浏览器自己尝试自动播；
+		// 被拦了也没事：WeixinJSBridgeReady / document click 会补 play()。
+		if (!storyEl) {
+			storyEl = document.getElementById('storyMusic');
+			storyEl.dataset.ready = 'loading';
+			storyEl.addEventListener('canplaythrough', function () { storyEl.dataset.ready = 'ready'; });
+			storyEl.addEventListener('error', function () { storyEl.dataset.ready = 'error'; });
+		}
 		if (!bgmEl) {
 			bgmEl = makeTrack(BGM_URL);
 			bgmEl.dataset.ready = 'loading';
-			bgmEl.addEventListener('canplaythrough', function () {
-				bgmEl.dataset.ready = 'ready';
-			});
-			bgmEl.addEventListener('error', function () {
-				bgmEl.dataset.ready = 'error';
-			});
+			bgmEl.addEventListener('canplaythrough', function () { bgmEl.dataset.ready = 'ready'; });
+			bgmEl.addEventListener('error', function () { bgmEl.dataset.ready = 'error'; });
+			bgmEl.load();
 		}
 	}
 
-	// 取叙事音频（本地文件，fetch 同源无 CORS 问题）
-	var storyAudioBuf = null;
-	function startStoryWebAudio() {
-		var ac = ensureAudio();
-		if (!ac) return;
-
-		// 总线增益：静音开关控制这里，而不是控制 audio 元素
-		if (!storyGain) {
-			storyGain = ac.createGain();
-			storyGain.gain.value = 0;   // 从 0 淡入到目标音量
-			storyGain.connect(ac.destination);
-		}
-
-		if (storyAudioBuf) { playStoryBuffer(); return; }
-
-		fetch(BGM_STORY_URL)
-			.then(function (r) { return r.arrayBuffer(); })
-			.then(function (ab) { return ac.decodeAudioData(ab); })
-			.then(function (buf) {
-				storyAudioBuf = buf;
-				storyBufferLen = buf.duration;
-				storyWebAudio = true;
-				playStoryBuffer();
-			})
-			.catch(function () {
-				// Web Audio 通道失败（decode 失败等）→ 退回 <audio> 通道
-				storyWebAudio = false;
-				if (!storyEl) {
-					storyEl = makeTrack(BGM_STORY_URL);
-					storyEl.dataset.ready = 'fallback';
-				}
-			});
-	}
-
-	function playStoryBuffer() {
-		var ac = audioCtx;
-		if (!ac || !storyAudioBuf) return;
-		if (storySrcNode) { try { storySrcNode.stop(); } catch (e) { } }
-
-		storySrcNode = ac.createBufferSource();
-		storySrcNode.buffer = storyAudioBuf;
-		storySrcNode.loop = true;
-		storySrcNode.connect(storyGain);
-		storyOffset = BGM_STORY_OFFSET % storyBufferLen;
-		storyStartedAt = ac.currentTime;
-		storySrcNode.start(0, storyOffset);
-		storyActive = true;
-
-		// 淡入到目标音量（静音开关开着的话）
-		var target = bgmOn ? BGM_STORY_VOLUME : 0;
-		storyGain.gain.cancelScheduledValues(ac.currentTime);
-		storyGain.gain.setValueAtTime(0.0001, ac.currentTime);
-		storyGain.gain.exponentialRampToValueAtTime(Math.max(0.001, target), ac.currentTime + 1.6);
-		syncBgmBtn();
-	}
-
-	// 全页面解锁：任何一次交互都把声音放出来。只跑一次。
-	function unlockAudio() {
-		if (bgmUnlocked) return;
-		bgmUnlocked = true;
-		['pointerdown', 'touchstart', 'keydown'].forEach(function (ev) {
-			document.removeEventListener(ev, unlockAudio, true);
-		});
-
+	function bgmStartStory() {
 		var ac = ensureAudio();
 		if (ac && ac.state === 'suspended') ac.resume();
+		unlockAudio();
+	}
 
-		// 叙事轨走 Web Audio：AudioContext resume 即出声，无需摘 muted
-		if (storyWebAudio && storyGain) {
-			var target = bgmOn ? BGM_STORY_VOLUME : 0.001;
-			storyGain.gain.cancelScheduledValues(ac.currentTime);
-			storyGain.gain.setValueAtTime(Math.max(0.001, storyGain.gain.value), ac.currentTime);
-			storyGain.gain.exponentialRampToValueAtTime(target, ac.currentTime + 0.6);
-		} else if (storyEl) {
-			// 退回 <audio> 通道时才需要这套
-			if (storyEl.paused) playWithRetry(storyEl);
-			storyEl.muted = false;
-			fadeEl(storyEl, bgmOn ? BGM_STORY_VOLUME : 0, 900, false);
-		}
-
-		// 生日歌 <audio>：此刻已在手势内，静音起播不会被拦
+	function bgmSwitchToBirthday() {
+		storyActive = false;
+		bdayActive = true;
+		if (storyEl) storyEl.pause();
 		if (bgmEl) {
-			if (bgmEl.paused) {
-				var q = bgmEl.play();
-				if (q && q.catch) q.catch(function () { });
-			}
-			bgmEl.muted = false;
-			bgmEl.volume = 0;    // 仍静音，等切换那一刻
+			try { bgmEl.currentTime = 0; } catch (e) { }
+			bgmEl.volume = BGM_TRACK_VOLUME;
+			bgmEl.play().catch(function () { });
 		}
-		storyActive = true;
 		syncBgmBtn();
 	}
 
@@ -1239,192 +1153,57 @@
 		['pointerdown', 'touchstart', 'keydown'].forEach(function (ev) {
 			document.addEventListener(ev, unlockAudio, true);
 		});
-		// 微信 webview：JSBridge 就绪本身就是一次可放声的时机
+		// 微信 webview：JSBridge 就绪即放声（love/ 同款）
 		document.addEventListener('WeixinJSBridgeReady', function () {
 			if (bgmUnlocked) return;
 			bgmUnlocked = true;
-			var ac = ensureAudio();
-			if (ac && ac.state === 'suspended') ac.resume();
-			if (storyWebAudio && storyGain) {
-				var t = bgmOn ? BGM_STORY_VOLUME : 0.001;
-				storyGain.gain.cancelScheduledValues(ac.currentTime);
-				storyGain.gain.exponentialRampToValueAtTime(t, ac.currentTime + 0.6);
-			} else if (storyEl) {
-				if (storyEl.paused) storyEl.play().catch(function () { });
-				storyEl.muted = false;
-				fadeEl(storyEl, bgmOn ? BGM_STORY_VOLUME : 0, 900, false);
-			}
 			storyActive = true;
+			if (storyEl) { storyEl.muted = false; storyEl.volume = BGM_STORY_VOLUME; storyEl.play().catch(function () { }); }
 			syncBgmBtn();
 		});
 	}
 
-	// 点击时若还在缓冲，给一个很轻的提示（不打断，只是不让人以为坏了）
-	function trackStatus() {
-		return {
-			ctxState: audioCtx ? audioCtx.state : 'none',
-			story: storyWebAudio ? 'webaudio' : (storyEl ? storyEl.dataset.ready : 'none'),
-			storyPos: storyWebAudio ? +storyNow().toFixed(1) : 0,
-			birthday: bgmEl ? bgmEl.dataset.ready : 'none',
-			birthdayBuffered: bgmEl && bgmEl.buffered.length
-				? Math.round(bgmEl.buffered.end(0)) : 0
-		};
-	}
-
-	// Web Audio 通道：当前播到文件内第几秒
-	function storyNow() {
-		if (!audioCtx || !storySrcNode) return 0;
-		return (storyOffset + audioCtx.currentTime - storyStartedAt) % (storyBufferLen || 1);
-	}
-
-	// 元数据没加载完时设 currentTime 会被静默忽略，等 loadedmetadata 再跳
-	function seekOnReady(el, t) {
-		if (!el) return;
-		var apply = function () { try { el.currentTime = t; } catch (e) { } };
-		if (el.readyState >= 1) { apply(); return; }
-		var once = function () {
-			el.removeEventListener('loadedmetadata', once);
-			apply();
-		};
-		el.addEventListener('loadedmetadata', once);
-	}
-
-	// play() 被自动播放策略拦掉时，等下一次触摸再试一次 —— iOS 微信常见
-	function playWithRetry(el) {
-		if (!el) return;
-		var p = el.play();
-		if (!p || !p.catch) return;
-		p.catch(function () {
-			var retry = function () {
-				document.removeEventListener('pointerdown', retry);
-				var q = el.play();
-				if (q && q.catch) q.catch(function () { });
-			};
-			document.addEventListener('pointerdown', retry);
+	function unlockAudio() {
+		if (bgmUnlocked) return;
+		bgmUnlocked = true;
+		['pointerdown', 'touchstart', 'keydown'].forEach(function (ev) {
+			document.removeEventListener(ev, unlockAudio, true);
 		});
-	}
-
-	function fadeEl(el, to, ms, pauseAtZero) {
-		if (!el) return;
-		if (el.__fade) cancelAnimationFrame(el.__fade);
-		var from = el.volume;
-		var t0 = performance.now();
-		var step = function (now) {
-			var k = Math.min(1, (now - t0) / ms);
-			el.volume = Math.max(0, Math.min(1, from + (to - from) * k));
-			if (k < 1) {
-				el.__fade = requestAnimationFrame(step);
-			} else {
-				el.__fade = null;
-				// 只有「真的下场」才暂停；静音只是把音量拉到 0，元素继续跑，
-				// 否则恢复的时候只剩音量没有声音
-				if (pauseAtZero && to === 0) el.pause();
-			}
-		};
-		el.__fade = requestAnimationFrame(step);
-	}
-
-	// 叙事幕开始：放轻音乐，同时把生日歌「预热」一下
-	function bgmStartStory() {
-		var ac = ensureAudio();
-		if (ac && ac.state === 'suspended') ac.resume();
-
-		// 主路径：Web Audio 通道已在 preloadTracks() 里起播，这里只补兜底
-		if (storyWebAudio) {
-			if (!storySrcNode) playStoryBuffer();
-		} else {
-			if (!storyEl) preloadTracks();
-			if (storyEl.paused) playWithRetry(storyEl);
-			seekOnReady(storyEl, BGM_STORY_OFFSET);
-		}
 		storyActive = true;
-		unlockAudio();
-	}
-
-	// 进正片：轻音乐淡出，生日歌从头淡入
-	function bgmSwitchToBirthday() {
-		storyActive = false;
-		bdayActive = true;
-
-		// 叙事轨 Web Audio：1.4s 淡出后停掉源节点
-		if (storyWebAudio && storyGain && audioCtx) {
-			var now = audioCtx.currentTime;
-			storyGain.gain.cancelScheduledValues(now);
-			storyGain.gain.setValueAtTime(Math.max(0.0001, storyGain.gain.value), now);
-			storyGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.4);
-			var node = storySrcNode;
-			setTimeout(function () {
-				if (node && node === storySrcNode) { try { node.stop(); } catch (e) { } storySrcNode = null; }
-			}, 1500);
-		} else if (storyEl) {
-			fadeEl(storyEl, 0, 1400, true);
+		if (storyEl) {
+			storyEl.muted = false;
+			storyEl.volume = BGM_STORY_VOLUME;
+			storyEl.play().catch(function () { });
 		}
-
-		if (!bgmEl) {
-			BGM_URL = '';
-			bgmStartSynth();
-			return;
+		if (bgmEl) {
+			bgmEl.volume = 0;
+			bgmEl.play().catch(function () { });
 		}
-		try { bgmEl.currentTime = 0; } catch (e) { }
-		var p = bgmEl.play();
-		if (p && p.catch) {
-			p.catch(function () {
-				// 先重试一次，还不行才认为音源废了，退合成版
-				var q = bgmEl && bgmEl.play();
-				if (q && q.catch) {
-					q.catch(function () {
-						bgmEl = null;
-						BGM_URL = '';
-						bgmStartSynth();
-					});
-				}
-			});
-		}
-		if (bgmOn) fadeEl(bgmEl, BGM_TRACK_VOLUME, 1800, false);
 		syncBgmBtn();
 	}
 
-	function bgmStartSynth() {
-		var ac = ensureAudio();
-		if (!ac) return;
-		if (ac.state === 'suspended') ac.resume();
-		if (bgmStarted) return;
-		if (!bgmBusInit()) return;
-		bgmStarted = true;
-		bgmNext = ac.currentTime + 0.5;
-		bgmPump();
-		if (bgmTimer) clearInterval(bgmTimer);
-		bgmTimer = setInterval(bgmPump, 400);
-		bgmApplyGain(bgmOn);
-	}
-
-	function resume(el) {
-		if (!el || !el.paused) return;
-		var p = el.play();
-		if (p && p.catch) p.catch(function () { });
+	function trackStatus() {
+		return {
+			story: storyEl ? (storyEl.paused ? 'paused' : 'playing') : 'none',
+			storyTime: storyEl ? +storyEl.currentTime.toFixed(1) : 0,
+			birthday: bgmEl ? bgmEl.dataset.ready : 'none'
+		};
 	}
 
 	function syncBgmBtn() {
 		bgmBtn.textContent = bgmOn ? '♪' : '🔇';
-		bgmBtn.classList.toggle('on', bgmOn && (storyWebAudio || storyActive || bdayActive || bgmStarted));
+		bgmBtn.classList.toggle('on', bgmOn && (storyActive || bdayActive || bgmStarted));
 		bgmBtn.classList.toggle('off', !bgmOn);
 	}
 
 	function applyBgmUi() {
-		// Web Audio 通道：直接控制总线增益
-		if (storyWebAudio && storyGain && audioCtx) {
-			var t = bgmOn ? Math.max(0.001, BGM_STORY_VOLUME) : 0.0001;
-			storyGain.gain.cancelScheduledValues(audioCtx.currentTime);
-			storyGain.gain.setValueAtTime(Math.max(0.0001, storyGain.gain.value), audioCtx.currentTime);
-			storyGain.gain.exponentialRampToValueAtTime(t, audioCtx.currentTime + 0.35);
-		}
-		if (storyEl && !storyWebAudio) {
-			if (bgmOn && storyActive) { resume(storyEl); fadeEl(storyEl, BGM_STORY_VOLUME, 300, false); }
-			else fadeEl(storyEl, 0, 300, false);
+		if (storyEl) {
+			storyEl.muted = !bgmOn;
+			storyEl.volume = bgmOn ? BGM_STORY_VOLUME : 0;
 		}
 		if (bgmEl) {
-			if (bgmOn && bdayActive) { resume(bgmEl); fadeEl(bgmEl, BGM_TRACK_VOLUME, 300, false); }
-			else fadeEl(bgmEl, 0, 300, false);
+			bgmEl.muted = !bgmOn;
+			bgmEl.volume = (bgmOn && bdayActive) ? BGM_TRACK_VOLUME : 0;
 		}
 		bgmApplyGain(bgmOn);
 		syncBgmBtn();
