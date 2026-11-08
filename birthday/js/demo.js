@@ -942,13 +942,12 @@
 	   两个都自己托管在 music/ 下，不发任何外部请求。
 	   合成版（Web Audio）留作生日歌的兜底。
 
-	   音频必须由用户手势触发，但「下载」不用等手势：
-	   页面一加载就预建两个 <audio> 并 preload="auto"，把下载摊在开场封面那几秒；
-	   点击那一帧只负责解锁播放，不新建元素。网络慢或抖的时候不至于进去没声。
-
-	   微信 iOS 尤其严格 —— 光在开头点一次不够，生日歌那个 <audio>
-	   也必须在那一次手势里先 play 一下（0 音量），否则隔 80 秒再调 play()
-	   会被静默拦掉。所以点击时仍有「预热」这一步。
+	   下载和「起播」都不等用户点 ♪：
+	   - 页面加载就预建两个 <audio>、preload=auto 开始下载
+	   - 同时以 muted 状态 play()，静音自动播是浏览器允许的，时间轴照走
+	   - 任意一次触摸 / 按键 / 微信 JSBridge 就绪，摘掉 muted 放到目标音量
+	   所以用户看到封面时音乐其实已经在跑，第一下触碰（点哪儿都行）就出声，
+	   不需要专门去找那个 ♪ 按钮。♪ 退化成纯静音开关。
 	   --------------------------------------------------------------------- */
 	// ★ 本地优先：叙事音乐直接用仓库里的文件，不发任何外部请求。
 	//   之前主源挂的是 netlify 直链，国内时通时不通，而且请求挂起时既不返回
@@ -991,6 +990,7 @@
 	var storyEl = null;         // 叙事音乐 <audio>
 	var storyActive = false;    // 叙事幕还在放，用来算静音恢复时的目标音量
 	var bdayActive = false;     // 生日歌已经接管
+	var bgmUnlocked = false;    // 是否已经摘掉 muted 放过声
 	var bgmBtn = document.getElementById('bgmBtn');
 
 	function midiToFreq(m) { return 440 * Math.pow(2, (m - 69) / 12); }
@@ -1131,6 +1131,56 @@
 			});
 			bgmEl.load();
 		}
+
+		// 静音自动起播：浏览器允许 muted autoplay，先把时间轴跑起来。
+		// 解锁后只需摘 muted，不用再调 play()，iOS 微信也不会拦。
+		storyEl.muted = true;
+		bgmEl.muted = true;
+		var p1 = storyEl.play();
+		if (p1 && p1.catch) p1.catch(function () { /* 被拦也没关系，解锁时再兜 */ });
+		var p2 = bgmEl.play();
+		if (p2 && p2.catch) p2.catch(function () { });
+	}
+
+	// 全页面解锁：任何一次交互都把声音放出来。只跑一次。
+	function unlockAudio() {
+		if (bgmUnlocked) return;
+		bgmUnlocked = true;
+		['pointerdown', 'touchstart', 'keydown'].forEach(function (ev) {
+			document.removeEventListener(ev, unlockAudio, true);
+		});
+
+		// 静音起播可能在某些内核里被拒，这里补一次 play()（此刻已在手势内）
+		if (storyEl && storyEl.paused) {
+			var p = storyEl.play();
+			if (p && p.catch) p.catch(function () { });
+		}
+		if (bgmEl && bgmEl.paused) {
+			var q = bgmEl.play();
+			if (q && q.catch) q.catch(function () { });
+		}
+
+		// 摘 muted 放到目标音量；♪ 若被按成静音则保持 0
+		var vol = bgmOn ? BGM_STORY_VOLUME : 0;
+		if (storyEl) { storyEl.muted = false; fadeEl(storyEl, vol, 900, false); }
+		if (bgmEl) { bgmEl.muted = false; bgmEl.volume = 0; }   // 生日歌仍静音待切换
+		storyActive = true;
+		syncBgmBtn();
+	}
+
+	function armAudioUnlock() {
+		['pointerdown', 'touchstart', 'keydown'].forEach(function (ev) {
+			document.addEventListener(ev, unlockAudio, true);
+		});
+		// 微信 webview：JSBridge 就绪本身就是一次可放声的时机
+		document.addEventListener('WeixinJSBridgeReady', function () {
+			if (bgmUnlocked) return;
+			if (storyEl && storyEl.paused) storyEl.play().catch(function () { });
+			bgmUnlocked = true;
+			if (storyEl) { storyEl.muted = false; fadeEl(storyEl, bgmOn ? BGM_STORY_VOLUME : 0, 900, false); }
+			storyActive = true;
+			syncBgmBtn();
+		});
 	}
 
 	// 点击时若还在缓冲，给一个很轻的提示（不打断，只是不让人以为坏了）
@@ -1197,20 +1247,14 @@
 		var ac = ensureAudio();
 		if (ac && ac.state === 'suspended') ac.resume();
 
-		// 元素在页面加载时就建好并开始下载了，这里只做解锁 + 起播
-		if (!storyEl) preloadTracks();          // 兜底：万一被清空了
-		storyActive = true;
-		storyEl.volume = 0;
-		playWithRetry(storyEl);
+		// 起播已经在 preloadTracks() + 全局解锁里完成了。
+		// 这里只做兜底：万一静音自动播被内核拒了，这一帧（手势内）补一次。
+		if (!storyEl) preloadTracks();
+		if (storyEl.paused) playWithRetry(storyEl);
+		if (bgmEl && bgmEl.paused) playWithRetry(bgmEl);
 		seekOnReady(storyEl, BGM_STORY_OFFSET);
-		if (bgmOn) fadeEl(storyEl, BGM_STORY_VOLUME, 1500, false);
-		syncBgmBtn();
-
-		// 关键：这次手势里也让生日歌静音跑一下。
-		// iOS 微信只认「元素在手势内被 play 过」，隔 80 秒再调 play() 会被拦。
-		if (!bgmEl) bgmEl = makeTrack(BGM_URL);
-		bgmEl.volume = 0;
-		playWithRetry(bgmEl);
+		storyActive = true;
+		unlockAudio();
 	}
 
 	// 进正片：轻音乐淡出，生日歌从头淡入
@@ -1581,7 +1625,8 @@
 	}
 
 	function boot() {
-		preloadTracks();            // 第一件事：把两条音轨挂上开始下载
+		preloadTracks();            // 第一件事：建轨、下载、静音起播
+		armAudioUnlock();           // 任意一次交互即放声
 		layout();
 		sampleText();
 		setupControls();
