@@ -1173,7 +1173,11 @@
 		if (storyEl) {
 			storyEl.muted = false;
 			storyEl.volume = BGM_STORY_VOLUME;
-			storyEl.play().catch(function () { });
+			var p = storyEl.play();
+			if (p && p.catch) p.catch(function () {
+				// 被拦就重试一次
+				setTimeout(function () { storyEl.play().catch(function () { }); }, 200);
+			});
 		}
 		if (bgmEl) {
 			bgmEl.volume = 0;
