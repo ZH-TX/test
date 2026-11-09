@@ -32,6 +32,8 @@
      { kind: 'wall', photos: [{ src: 'img/a.jpg', cap: '9.17 第一次见面' }, ...] }
         照片墙：拍立得错落，一张张落下来。张数决定列数，不用管布局。
         cap   白边下面那行手写字（可省略）
+        wide  横图：true = 跨 2 列；写数字 = 跨 N 列（超宽图用 3）
+        ratio 单张覆盖宽高比（如 "2.8"，配合 wide 用）
         tilt  单张倾斜角度（度，可省略，默认随机 -6~6）
         dy    单张上下错位（px，可省略，默认随机）
         step  每张落下的间隔（毫秒，默认 120）
@@ -106,26 +108,6 @@
       lines: ["不知不觉又大了一岁", "娇娇有没有想我吖"],
     },
 
-    // ===== 照片墙 =====
-    // 换图就改 photos 数组：src 是图片路径，cap 是白边下面那行手写字。
-    // 张数随便加，列数会自动算。想单独调某一张的倾斜角写 tilt（度），
-    // 想让它比旁边高一点写 dy（px）。
-    {
-      kind: "wall",
-      hold: 2800,
-      step: 130,
-      photos: [
-        { src: "img/photo.jpg", cap: "9.17 第一次见面" },
-        { src: "img/avator.jpg", cap: "那天风很大" },
-        { src: "img/photo.jpg", cap: "一起吃的第一顿饭" },
-        { src: "img/avator.jpg", cap: "你说这张好看" },
-        { src: "img/photo.jpg", cap: "中秋那晚" },
-        { src: "img/avator.jpg", cap: "笑得停不下来" },
-        { src: "img/photo.jpg", cap: "路过的那家店" },
-        { src: "img/avator.jpg", cap: "今年也要一起" }
-      ]
-    },
-
     {
       kind: "so",
       hold: 1200,
@@ -149,6 +131,27 @@
       gap: 420,
       // 第二句占位，待你改写
       lines: ["好啦，下面还有哦", "往下走，别眨眼"],
+    },
+    // ===== 照片墙 =====
+    // 换图就改 photos 数组：src 是图片路径，cap 是白边下面那行手写字。
+    // 张数随便加，列数会自动算。想单独调某一张的倾斜角写 tilt（度），
+    // 想让它比旁边高一点写 dy（px）。
+    {
+      kind: "wall",
+      hold: 2800,
+      step: 130,
+      photos: [
+        { src: "img/kissM.jpg", cap: "这张我不敢多看", wide: true },
+        { src: "img/smile.jpg", cap: "笑得眼睛都没了" },
+        { src: "img/mirror.jpg", cap: "你说自己不好看，我不服" },
+        { src: "img/orderM.jpg", cap: "第一次一起点外卖", wide: true },
+        { src: "img/red.jpg", cap: "红裙子那天" },
+        { src: "img/child.jpg", cap: "小时候的你就很好看" },
+        { src: "img/tsundere.jpg", cap: "嘴硬的时候最可爱", wide: true, ratio: "2.8" },
+        { src: "img/stree.jpg", cap: "路上随手拍的" },
+        { src: "img/photo.jpg", cap: "一直存在我手机里" },
+        { src: "img/avator.jpg", cap: "现在的你" }
+      ]
     },
   ];
 
@@ -335,10 +338,13 @@
       // 照片墙：张数决定列数，网格自动排布，随机倾斜 + 交错下落
       s = newScene();
       var photos = sc.photos || [];
-      var cols = photos.length <= 4 ? 2
-        : photos.length <= 6 ? 3
-          : photos.length <= 8 ? 4
-            : photos.length <= 9 ? 3 : 4;
+      // 横图（wide）占两格，列数按总格子数算，否则最后一行会豁口
+      var cells = 0;
+      for (i = 0; i < photos.length; i++) cells += typeof photos[i].wide === "number" ? photos[i].wide : (photos[i].wide ? 2 : 1);
+      var cols = cells <= 4 ? 2
+        : cells <= 7 ? 3
+          : cells <= 8 ? 4
+            : cells <= 9 ? 3 : 4;
 
       var grid = make("div", "wall-grid");
       grid.style.setProperty("--cols", cols);
@@ -347,6 +353,13 @@
       for (i = 0; i < photos.length; i++) {
         var ph = photos[i];
         var fig = make("figure", "pola");
+        var span = 0;
+        if (ph.wide) {
+          // wide: true → 跨 2 列；wide: 3 → 跨 3 列（超宽图用）
+          span = typeof ph.wide === "number" ? ph.wide : 2;
+          fig.classList.add("wide");
+          fig.style.gridColumn = "span " + span;
+        }
         // 倾斜和上下错落可以单张指定，不指定就随机（-6°~6°）
         var tilt = ph.tilt != null ? ph.tilt : (Math.random() * 12 - 6);
         var dy = ph.dy != null ? ph.dy : Math.round(Math.random() * 16 - 3);
@@ -357,6 +370,10 @@
         pimg.src = ph.src;
         pimg.alt = "";
         pimg.loading = "lazy";
+        if (span) {
+          // 默认跨 2 列用 1.45:1，跨 3 列用 2.5:1；单张可用 ratio 覆盖
+          pimg.style.aspectRatio = ph.ratio || (span >= 3 ? "2.5" : "1.45");
+        }
         fig.appendChild(pimg);
 
         if (ph.cap) {
@@ -493,6 +510,8 @@
       }
       function onTap(e) {
         if (e.target && e.target.closest && e.target.closest(".bgm")) return;
+        // 照片墙在手机上要能滑动，滑墙不算「点一下推进」
+        if (e.target && e.target.closest && e.target.closest(".wall-grid")) return;
         fin();
       }
 

@@ -558,6 +558,10 @@
 	background: #d8cfc6;
 }
 
+.pola.wide img {
+	object-position: 50% 50%;
+}
+
 .pola figcaption {
 	position: absolute;
 	left: 0;
@@ -583,6 +587,25 @@
 		grid-template-columns: repeat(2, 1fr);
 		width: 92vw;
 		gap: 16px 12px;
+		/* 手机一屏放不下 10 张，改成可纵向滚动，照片才不至于缩到看不清 */
+		max-height: 72vh;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		scrollbar-width: none;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.wall-grid::-webkit-scrollbar {
+		width: 0;
+	}
+
+	/* 手机上横图也按格子排，不跨列 */
+	.pola.wide {
+		grid-column: span 1 !important;
+	}
+
+	.pola.wide img {
+		aspect-ratio: 1 / 1.06 !important;
 	}
 
 	.pola {
