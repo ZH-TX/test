@@ -173,6 +173,11 @@
   //   8 = 很慢很慢（像真的在手写）；14 = 偏慢；22 = 正常；35 = 赶时间
   var LETTER_CPS = 10;
 
+  // 长信这三件套都关着：打字中不许点击跳过（否则一下就把全文糊出来），
+  // 写完的停留期间也不响应点击，只能等它自己走。
+  // 想恢复「打完点一下才翻页」，把 CLICK_AFTER_LETTER 改成 true。
+  var CLICK_AFTER_LETTER = false;
+
   var TAP_HINT_DELAY = 900; // 超过这么久没点，才浮出「轻触继续」提示
   var MIN_SETTLE = 550; // 进场动画至少播这么久才接受点击，防止误触连跳
 
@@ -609,7 +614,7 @@
   }
 
   // 长文本打字机：整段一次性铺开太贵，用 textContent 切片而不是逐字建 span。
-  // 打字途中点一下 = 立刻写完全部；写完之后再点一下才是翻页（由 dwell 负责）。
+  // 不挂任何点击监听：点多少下都只会按 LETTER_CPS 慢慢打，不会一下糊出全文。
   function typeLong(sc, token) {
     var node = sc.el.querySelector(".s-para");
     var card = sc.el.querySelector(".letter");
@@ -625,7 +630,6 @@
       var done = false;
 
       function unfollow() {
-        document.removeEventListener("pointerdown", onTap, true);
         node.classList.remove("typing");
       }
       function toEnd() {
@@ -638,10 +642,6 @@
         node.textContent = text;
         toEnd();
         res(token === TOKEN);
-      }
-      function onTap(e) {
-        if (e.target && e.target.closest && e.target.closest(".bgm")) return;
-        finish(); // 点一下直接写完
       }
       function step(now) {
         if (token !== TOKEN) {
@@ -664,7 +664,6 @@
         requestAnimationFrame(step);
       }
 
-      document.addEventListener("pointerdown", onTap, true);
       requestAnimationFrame(step);
     });
   }
@@ -706,7 +705,10 @@
       if (!(await wait(420 * SPEED, token))) return false;
       ok = await typeLong(sc, token);
       if (!ok) return false;
-      ok = await dwell(holdOf(sc), token);
+      // 长信写完之后的停留：默认纯计时，不抢点击，也不弹「轻触继续」
+      ok = CLICK_AFTER_LETTER
+        ? await dwell(holdOf(sc), token)
+        : await wait(holdOf(sc) * SPEED, token);
     } else if (sc.kind === "wall") {
       fitWall(sc);
       if (!(await wait(260 * SPEED, token))) return false;
