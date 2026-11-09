@@ -101,6 +101,7 @@
         "虽分隔两地, 但我对于你可是时常想念呀; 希望你可以快快好起来, 一起去体验以后得岁月 \n\n" +
         "我一直是非常喜欢月亮的这意象的, 明月高挂, 见月思人;「海上生明月, 天涯共此时」 抬头望月, 看到月亮就如古人般遥寄思念到远方的佳人\n\n" +
         "我不一定能给你多厉害的东西,  但我想一直陪在你身边。\n\n" +
+        "别忘了, 今天可是星星相吸的一天; 特别的一天, 特别的娇娇, 想你~ \n\n" +
         "生日快乐。\n" +
         "不是客套话，是真的希望你今天开心，明天也开心，一直开心下去。",
     },
@@ -143,17 +144,17 @@
       hold: 2800,
       step: 130,
       photos: [
-        { src: "img/kissM.jpg", cap: "这张我不敢多看", wide: true },
+        { src: "img/child.jpg", cap: "小时候傲娇的你" },
         { src: "img/smile.jpg", cap: "笑得眼睛都没了" },
-        { src: "img/mirror.jpg", cap: "你说自己不好看，我不服" },
-        { src: "img/orderM.jpg", cap: "第一次一起点外卖", wide: true },
+        { src: "img/mirror.jpg", cap: "翩若惊鸿的" },
+        { src: "img/orderM.jpg", cap: "订婚时刻", wide: true },
         { src: "img/red.jpg", cap: "红裙子那天" },
-        { src: "img/child.jpg", cap: "小时候的你就很好看" },
-        { src: "img/tsundere.jpg", cap: "嘴硬的时候最可爱", wide: true, ratio: "2.8" },
+        { src: "img/kissM.jpg", cap: "这张我不敢多看 mua~", wide: true },
+        { src: "img/tsundere.jpg", cap: "嘴硬的时候最可爱 三连~", wide: true, ratio: "2.8" },
         { src: "img/stree.jpg", cap: "路上随手拍的" },
-        { src: "img/photo.jpg", cap: "一直存在我手机里" },
-        { src: "img/avator.jpg", cap: "现在的你" }
-      ]
+        { src: "img/photo.jpg", cap: "去年的今天" },
+        { src: "img/avator.jpg", cap: "现在的你" },
+      ],
     },
   ];
 
@@ -342,11 +343,9 @@
       var photos = sc.photos || [];
       // 横图（wide）占两格，列数按总格子数算，否则最后一行会豁口
       var cells = 0;
-      for (i = 0; i < photos.length; i++) cells += typeof photos[i].wide === "number" ? photos[i].wide : (photos[i].wide ? 2 : 1);
-      var cols = cells <= 4 ? 2
-        : cells <= 7 ? 3
-          : cells <= 8 ? 4
-            : cells <= 9 ? 3 : 4;
+      for (i = 0; i < photos.length; i++)
+        cells += typeof photos[i].wide === "number" ? photos[i].wide : photos[i].wide ? 2 : 1;
+      var cols = cells <= 4 ? 2 : cells <= 7 ? 3 : cells <= 8 ? 4 : cells <= 9 ? 3 : 4;
 
       var grid = make("div", "wall-grid");
       grid.style.setProperty("--cols", cols);
@@ -363,7 +362,7 @@
           fig.style.gridColumn = "span " + span;
         }
         // 倾斜和上下错落可以单张指定，不指定就随机（-6°~6°）
-        var tilt = ph.tilt != null ? ph.tilt : (Math.random() * 12 - 6);
+        var tilt = ph.tilt != null ? ph.tilt : Math.random() * 12 - 6;
         var dy = ph.dy != null ? ph.dy : Math.round(Math.random() * 16 - 3);
         fig.style.setProperty("--tilt", tilt.toFixed(1) + "deg");
         fig.style.setProperty("--dy", dy + "px");
@@ -823,8 +822,10 @@
         // 轻触这一帧必须把两条音轨都「用掉」：轻音乐直接起，
         // 生日歌在 demo.js 里以 0 音量预热，切换时才不会被 iOS 拦
         if (window.__bgmStartStory) window.__bgmStartStory();
-        setTimeout(function () { splash.classList.add("opened"); }, 1350);
-        return;   // 停在封面，等第二下
+        setTimeout(function () {
+          splash.classList.add("opened");
+        }, 1350);
+        return; // 停在封面，等第二下
       }
       // 第二下：收起封面，开始叙事
       splash.removeEventListener("pointerdown", go);
