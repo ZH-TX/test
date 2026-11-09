@@ -37,6 +37,8 @@
         tilt  单张倾斜角度（度，可省略，默认随机 -6~6）
         dy    单张上下错位（px，可省略，默认随机）
         step  每张落下的间隔（毫秒，默认 120）
+        auto  默认 false：照片落完后停住，等点一下才进下一幕
+              写 true 就改回按时长自动走
 
      { kind: 'photo', photo: 'img/photo.jpg', wish: '生日快乐', sub: '愿你……' }
         圆形照片砸进 + 生日帽飞入 + 标题逐字弹跳。
@@ -382,6 +384,15 @@
           fig.appendChild(cap);
         }
 
+        // 点照片放大看，不推进
+        (function (src, c) {
+          pimg.addEventListener("click", function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+            openPhotoView(src, c);
+          });
+        })(ph.src, ph.cap || "");
+
         grid.appendChild(fig);
         sc.els.push(fig);
       }
@@ -487,10 +498,55 @@
   }
 
   // ---- 推进：定时器到点 or 点一下，谁先来算谁 ----
+  var photoView = document.getElementById("photoView");
+
+  function openPhotoView(src, cap) {
+    if (!photoView) return;
+    var im = photoView.querySelector("img");
+    if (im) im.src = src;
+    var cp = photoView.querySelector(".photo-view-cap");
+    if (cp) cp.textContent = cap || "";
+    photoView.classList.add("on");
+    if (tapEl) tapEl.classList.add("muted");
+  }
+
+  function closePhotoView() {
+    if (!photoView) return;
+    photoView.classList.remove("on");
+    if (tapEl) tapEl.classList.remove("muted");
+  }
+
   var tapEl = document.getElementById("tapHint");
 
   function showTapHint(on) {
     if (tapEl) tapEl.classList.toggle("on", !!on);
+  }
+
+  // 照片墙专用：只有点「轻触继续」才走，点照片/空白都不走
+  function waitForClick(token) {
+    return new Promise(function (res) {
+      var done = false;
+      var armedAt = 0;
+
+      function fin() {
+        if (done) return;
+        done = true;
+        if (tapEl) tapEl.removeEventListener("click", onHint);
+        showTapHint(false);
+        res(token === TOKEN);
+      }
+      function onHint(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        // 刚显示出来的 300ms 内忽略，避免上一次点击的 click 穿透过来
+        if (performance.now() - armedAt < 300) return;
+        fin();
+      }
+
+      showTapHint(true);
+      armedAt = performance.now();
+      if (tapEl) tapEl.addEventListener("click", onHint);
+    });
   }
 
   function raceAdvance(ms, token) {
@@ -661,7 +717,8 @@
         sc.els[w].classList.add("in");
         if (!(await wait(stepMs * SPEED, token))) return false;
       }
-      ok = await dwell(holdOf(sc), token);
+      // 照片墙默认不自动跳：等用户点一下再走（sc.auto = true 可改回自动）
+      ok = sc.auto ? await dwell(holdOf(sc), token) : await waitForClick(token);
     } else {
       ok = await dwell(holdOf(sc), token);
     }
@@ -691,13 +748,17 @@
   async function run(from) {
     var token = ++TOKEN;
     fast = false;
-    var start = from || 0;
 
-    for (var i = start; i < SCENES.length; i++) {
+    // 调试直达：只播目标那一幕，播完照常收尾（照片墙会等点击）
+    if (from > 0) {
+      await playScene(SCENES[from], token);
+      finish();
+      return;
+    }
+
+    for (var i = 0; i < SCENES.length; i++) {
       if (!(await playScene(SCENES[i], token))) return;
     }
-    // debug 模式（指定了起点）播完就停住，不进画布，方便反复调
-    if (start > 0) return;
     finish();
   }
 
@@ -716,6 +777,12 @@
   }
 
   function boot() {
+    if (photoView) {
+      photoView.addEventListener("click", function (e) {
+        e.stopPropagation();
+        closePhotoView();
+      });
+    }
     for (var i = 0; i < SCENES.length; i++) build(SCENES[i]);
 
     if (skipBtn) {
