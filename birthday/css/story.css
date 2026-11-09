@@ -517,3 +517,80 @@
 	0%, 100% { transform: translateX(0); }
 	50% { transform: translateX(4px); }
 }
+
+/* ============================================================
+   照片墙（拍立得错落）
+   ============================================================ */
+.wall-grid {
+	--cols: 3;
+	display: grid;
+	grid-template-columns: repeat(var(--cols), 1fr);
+	gap: 24px 18px;
+	width: min(600px, 90vw);
+	margin: 0 auto;
+	padding: 4px;
+}
+
+.pola {
+	position: relative;
+	margin: 0;
+	padding: 8px 8px 30px;
+	background: linear-gradient(170deg, #fffdfa, #f2eae2);
+	border-radius: 3px;
+	box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+	opacity: 0;
+	transform: rotate(var(--tilt, 0deg)) translateY(-18px) scale(0.9);
+	transition: opacity 0.5s ease, transform 0.62s cubic-bezier(0.22, 1, 0.36, 1);
+	will-change: transform, opacity;
+}
+
+.pola.in {
+	opacity: 1;
+	transform: rotate(var(--tilt, 0deg)) translateY(var(--dy, 0px)) scale(1);
+}
+
+.pola img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 1 / 1.06;
+	object-fit: cover;
+	object-position: 50% 25%;
+	background: #d8cfc6;
+}
+
+.pola figcaption {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 7px;
+	padding: 0 5px;
+	text-align: center;
+	font-size: 12.5px;
+	color: #6b5560;
+	letter-spacing: 0.02em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* 手写体（照片白边上的字） */
+.hand {
+	font-family: "Kaiti SC", "STKaiti", "KaiTi", "Songti SC", serif;
+}
+
+@media (max-width: 560px) {
+	.wall-grid {
+		grid-template-columns: repeat(2, 1fr);
+		width: 92vw;
+		gap: 16px 12px;
+	}
+
+	.pola {
+		padding: 6px 6px 24px;
+	}
+
+	.pola figcaption {
+		font-size: 11px;
+		bottom: 5px;
+	}
+}

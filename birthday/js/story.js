@@ -29,6 +29,13 @@
      { kind: 'so', chars: ['所', '以'] }
         巨大单字砸入。
 
+     { kind: 'wall', photos: [{ src: 'img/a.jpg', cap: '9.17 第一次见面' }, ...] }
+        照片墙：拍立得错落，一张张落下来。张数决定列数，不用管布局。
+        cap   白边下面那行手写字（可省略）
+        tilt  单张倾斜角度（度，可省略，默认随机 -6~6）
+        dy    单张上下错位（px，可省略，默认随机）
+        step  每张落下的间隔（毫秒，默认 120）
+
      { kind: 'photo', photo: 'img/photo.jpg', wish: '生日快乐', sub: '愿你……' }
         圆形照片砸进 + 生日帽飞入 + 标题逐字弹跳。
 
@@ -97,6 +104,26 @@
       kind: "lines",
       hold: 1400,
       lines: ["不知不觉又大了一岁", "娇娇有没有想我吖"],
+    },
+
+    // ===== 照片墙 =====
+    // 换图就改 photos 数组：src 是图片路径，cap 是白边下面那行手写字。
+    // 张数随便加，列数会自动算。想单独调某一张的倾斜角写 tilt（度），
+    // 想让它比旁边高一点写 dy（px）。
+    {
+      kind: "wall",
+      hold: 2800,
+      step: 130,
+      photos: [
+        { src: "img/photo.jpg", cap: "9.17 第一次见面" },
+        { src: "img/avator.jpg", cap: "那天风很大" },
+        { src: "img/photo.jpg", cap: "一起吃的第一顿饭" },
+        { src: "img/avator.jpg", cap: "你说这张好看" },
+        { src: "img/photo.jpg", cap: "中秋那晚" },
+        { src: "img/avator.jpg", cap: "笑得停不下来" },
+        { src: "img/photo.jpg", cap: "路过的那家店" },
+        { src: "img/avator.jpg", cap: "今年也要一起" }
+      ]
     },
 
     {
@@ -304,6 +331,44 @@
         h2.appendChild(c);
       }
       s.appendChild(h2);
+    } else if (sc.kind === "wall") {
+      // 照片墙：张数决定列数，网格自动排布，随机倾斜 + 交错下落
+      s = newScene();
+      var photos = sc.photos || [];
+      var cols = photos.length <= 4 ? 2
+        : photos.length <= 6 ? 3
+          : photos.length <= 8 ? 4
+            : photos.length <= 9 ? 3 : 4;
+
+      var grid = make("div", "wall-grid");
+      grid.style.setProperty("--cols", cols);
+      sc.els = [];
+
+      for (i = 0; i < photos.length; i++) {
+        var ph = photos[i];
+        var fig = make("figure", "pola");
+        // 倾斜和上下错落可以单张指定，不指定就随机（-6°~6°）
+        var tilt = ph.tilt != null ? ph.tilt : (Math.random() * 12 - 6);
+        var dy = ph.dy != null ? ph.dy : Math.round(Math.random() * 16 - 3);
+        fig.style.setProperty("--tilt", tilt.toFixed(1) + "deg");
+        fig.style.setProperty("--dy", dy + "px");
+
+        var pimg = make("img");
+        pimg.src = ph.src;
+        pimg.alt = "";
+        pimg.loading = "lazy";
+        fig.appendChild(pimg);
+
+        if (ph.cap) {
+          var cap = make("figcaption", "hand");
+          cap.textContent = ph.cap;
+          fig.appendChild(cap);
+        }
+
+        grid.appendChild(fig);
+        sc.els.push(fig);
+      }
+      s.appendChild(grid);
     } else if (sc.kind === "photo") {
       s = newScene();
       var wrap = make("div", "photo-wrap");
@@ -456,6 +521,19 @@
     return sc.gap || DEFAULT.gap;
   }
 
+  // 照片墙自适应：张数多了容易超出屏幕，统一缩放到可用高度内
+  function fitWall(sc) {
+    var grid = sc.el.querySelector(".wall-grid");
+    if (!grid) return;
+    grid.style.transform = "";
+    grid.style.transformOrigin = "center center";
+    var avail = window.innerHeight * 0.74;
+    var h = grid.getBoundingClientRect().height;
+    if (h > avail) {
+      grid.style.transform = "scale(" + (avail / h).toFixed(3) + ")";
+    }
+  }
+
   // 长文本打字机：整段一次性铺开太贵，用 textContent 切片而不是逐字建 span。
   // 打字途中点一下 = 立刻写完全部；写完之后再点一下才是翻页（由 dwell 负责）。
   function typeLong(sc, token) {
@@ -554,6 +632,16 @@
       if (!(await wait(420 * SPEED, token))) return false;
       ok = await typeLong(sc, token);
       if (!ok) return false;
+      ok = await dwell(holdOf(sc), token);
+    } else if (sc.kind === "wall") {
+      fitWall(sc);
+      if (!(await wait(260 * SPEED, token))) return false;
+      // 一张张落下来
+      var stepMs = sc.step || 120;
+      for (var w = 0; w < sc.els.length; w++) {
+        sc.els[w].classList.add("in");
+        if (!(await wait(stepMs * SPEED, token))) return false;
+      }
       ok = await dwell(holdOf(sc), token);
     } else {
       ok = await dwell(holdOf(sc), token);
