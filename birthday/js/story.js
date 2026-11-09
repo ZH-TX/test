@@ -671,13 +671,33 @@
     return await wait((sc.leaveGap || DEFAULT.leaveGap) * SPEED, token);
   }
 
-  async function run() {
+  // 调试用：?at=wall 直接跳到照片墙；?at=5 按索引跳；?at=letter 等按类型名
+  function debugTarget() {
+    var m = /[?&]at=([^&]+)/.exec(location.search);
+    if (!m) return -1;
+    var v = decodeURIComponent(m[1]);
+    var ALIAS = { letter: "para", mail: "para", photos: "wall", pic: "wall", album: "wall" };
+    if (ALIAS[v]) v = ALIAS[v];
+    if (/^\d+$/.test(v)) return Math.min(+v, SCENES.length - 1);
+    for (var i = SCENES.length - 1; i >= 0; i--) {
+      if (SCENES[i].kind === v) return i;
+    }
+    for (var j = SCENES.length - 1; j >= 0; j--) {
+      if (SCENES[j].kind.indexOf(v) === 0) return j;
+    }
+    return -1;
+  }
+
+  async function run(from) {
     var token = ++TOKEN;
     fast = false;
+    var start = from || 0;
 
-    for (var i = 0; i < SCENES.length; i++) {
+    for (var i = start; i < SCENES.length; i++) {
       if (!(await playScene(SCENES[i], token))) return;
     }
+    // debug 模式（指定了起点）播完就停住，不进画布，方便反复调
+    if (start > 0) return;
     finish();
   }
 
@@ -716,6 +736,15 @@
       },
       true,
     );
+
+    // 调试直达：?at=wall 之类，跳过开场封面和前面所有幕
+    var dbgAt = debugTarget();
+    if (dbgAt >= 0) {
+      var sp0 = document.getElementById("splash");
+      if (sp0) sp0.style.display = "none";
+      run(dbgAt);
+      return;
+    }
 
     var splash = document.getElementById("splash");
     var unsealed = false;
